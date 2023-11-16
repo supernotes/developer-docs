@@ -1,5 +1,5 @@
 {
-  "$schema": "https://api.supernotes.app/openapi.json",
+  "$schema": "https://mintlify.com/schema.json",
   "name": "Supernotes",
   "logo": {
     "dark": "/logo/dark.svg",
@@ -15,6 +15,7 @@
       "to": "#FF6682"
     }
   },
+  "openapi": "./openapi.json",
   "api": {
     "baseUrl": "https://api.supernotes.app/",
     "auth": {
