@@ -1,0 +1,28 @@
+---
+title: Readwise to Supernotes
+---
+
+<Info>
+  This was originally posted by @freisatz in the [Supernotes
+  Community](https://community.supernotes.app/t/readwise-to-supernotes-via-pipedream/1987).
+</Info>
+
+Just recently it came to my attention that Readwise now offers an App called Reader. Readwise has been around for several years and is a tool to manage your personal highlights discovered in text somewhere in the digital sphere. Recently, they added Reader as a fully fledged Feed reader and Read-it-later client beautifully combined in a single app, which really reduces the friction I experienced with Readwise before.
+
+The fancy part is that Reader integrates the highlighting mechanism of Readwise. Plus, it offers automations for several note taking applications, such as Obsidian an Notion. Supernotes, however, is not officially supported.
+
+End of Story?
+
+Not at all, for where there is an API, there is a way! We can use pipedream to connect both tools using their APIs.
+
+I created a workflow on pipedream (which is really lowcode) that creates a new note whenever I add a highlight to Readwise. This is as easy as selecting text in the Reader app, or in the Browser using the Readwise extension.
+
+![](https://community.supernotes.app/uploads/default/optimized/2X/a/af71de340a7ac91e2b10f21249b8ff7de84904e2_2_472x1000.jpeg)
+
+Pipedream now creates a note, which respects the syntax I traditionally use for literature notes. I can even add a personal note to the selection in Readwise, which is then also exported.
+
+![](https://community.supernotes.app/uploads/default/optimized/2X/0/0ff71b8ac24badb91f6075b32c6ab8e42cdaf75b_2_472x1000.jpeg)
+
+Pretty sweet, right? This even works for Youtube videos, as Readwise Reader allows for highlighting text in the transcript!
+
+In pipedream, I had to insert a Python step to get details on the book from the Readwise API, particularly the website title and author that I use to compose the note. Feel free to ask if you have any questions on the details.

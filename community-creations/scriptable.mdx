@@ -1,0 +1,54 @@
+```js
+const API_KEY = args.widgetParameter;
+const cardCollection = await loadPinnedCards();
+const cards = Object.values(cardCollection);
+const widget = await createCardWidget(cards[0]);
+Script.setWidget(widget);
+Script.complete();
+
+async function createCardWidget(card) {
+  const date = new Date(Date.parse(card.data.modified_when));
+  const dateFormatter = new DateFormatter();
+  dateFormatter.useMediumDateStyle();
+  dateFormatter.useShortTimeStyle();
+  const strDate = dateFormatter.string(date);
+  const gradient = new LinearGradient();
+  gradient.locations = [0, 1];
+  gradient.colors = [new Color("#ff607e"), new Color("#ff6682")];
+  const widget = new ListWidget();
+  widget.backgroundColor = new Color("#ff6682");
+  widget.backgroundGradient = gradient;
+  // name
+  const nameElement = widget.addText(card.data.name);
+  nameElement.font = Font.boldSystemFont(16);
+  nameElement.textColor = Color.white();
+  nameElement.minimumScaleFactor = 0.75;
+  widget.addSpacer(6);
+  // content
+  contentElement = widget.addText(card.data.markup);
+  contentElement.font = Font.mediumSystemFont(12);
+  contentElement.textColor = Color.white();
+  widget.addSpacer(6);
+  // date modified
+  const footerStack = widget.addStack();
+  const dateElement = footerStack.addText(strDate);
+  dateElement.font = Font.mediumSystemFont(12);
+  dateElement.textColor = Color.white();
+  dateElement.textOpacity = 0.8;
+  // open the card directly in Supernotes app when clicking
+  widget.url = createCardUrl(card.data.id);
+  return widget;
+}
+
+async function loadPinnedCards() {
+  const req = new Request("https://api.supernotes.app/v1/user/pins");
+  req.method = "get";
+  req.headers = { "Content-Type": "application/json", "Api-Key": API_KEY };
+  const jsonResponse = await req.loadJSON();
+  return jsonResponse;
+}
+
+function createCardUrl(cardId) {
+  return `supernotes://?cardId=${cardId}`;
+}
+```

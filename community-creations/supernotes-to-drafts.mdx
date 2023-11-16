@@ -1,0 +1,31 @@
+---
+title: Supernotes to Drafts
+---
+
+[Drafts Website](https://getdrafts.com/)
+
+```js
+var http = HTTP.create();
+
+let title = draft.processTemplate("[[title]]");
+let body = draft.processTemplate("[[body]]");
+
+var response = http.request({
+  url: "https://api.supernotes.app/v1/cards/simple",
+  method: "POST",
+  headers: {
+    "Api-key": "YOUR-SUPERNOTES-API-KEY",
+    "Content-Type": "application/json",
+  },
+  data: {
+    icon: "",
+    name: title,
+    markup: body,
+  },
+});
+
+if (response.error) {
+  console.log(response.error);
+  context.fail();
+}
+```

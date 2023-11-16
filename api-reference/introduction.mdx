@@ -1,33 +1,33 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "Getting Started"
+description: "Here's how to get started with the Supernotes API"
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+<Info>
+  These docs are currently work in progress if you notice anything please open
+  an issue or submit a pull request over on the [Github
+  repository](https://github.com/supernotes/developer-docs).
+</Info>
 
 ## Welcome
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+We are currently working on this comprehensive set of docs for getting started with the Supernotes API, but they are not ready yet. In the meantime, a complete API Reference can be found using your preferred OpenAPI spec below:
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+<CardGroup cols={3}>
+  <Card title="RapiDoc" href="https://api.supernotes.app/docs/rapidoc"></Card>
+  <Card title="ReDoc" href="https://api.supernotes.app/docs/redoc"></Card>
+  <Card title="Swagger" href="https://api.supernotes.app/docs/swagger"></Card>
+</CardGroup>
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+API keys can be used to interact with the Supernotes API, and are managed directly from your Supernotes account. To find them, start by clicking the User button, then > Settings > Manage Account > Manage API Keys. From there you can create, view, or delete API keys.
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
+<Warning>
+  Warning: API keys give full access to a Supernotes account. Anyone with an API
+  key can create, edit, or delete any cards on that account.
+</Warning>
+
+## Developers Corner
+
+If you would like further assistance or share what you are building with our API please head over to the developers section of our [Community](https://community.supernotes.app/c/developers/11).

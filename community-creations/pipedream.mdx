@@ -1,0 +1,17 @@
+```bash
+curl -X 'POST' \
+  'https://api.supernotes.app/v1/user/webhooks/' \
+  -H 'accept: application/json' \
+  -H 'Api-Key: ENTER_API_KEY_HERE' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "url": "ENTER_URL_HERE"
+}'
+```
+
+<Note>
+  Remember to remove the webhook when you’re done to avoid sending your cards to
+  places you don’t intend. Once you actually have a use-case / place you want to
+  send your cards consistently it is of course fine to leave that webhook in
+  place indefinitely.
+</Note>

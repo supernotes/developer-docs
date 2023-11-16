@@ -1,29 +1,35 @@
 {
-  "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "$schema": "https://api.supernotes.app/openapi.json",
+  "name": "Supernotes",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#E43051",
+    "light": "#FF6682",
+    "dark": "#FF6682",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#E43051",
+      "to": "#FF6682"
+    }
+  },
+  "api": {
+    "baseUrl": "https://api.supernotes.app/",
+    "auth": {
+      "method": "key"
     }
   },
   "topbarLinks": [
     {
-      "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "name": "Community",
+      "url": "https://community.supernotes.app/c/developers/11"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "name": "Go to App",
+    "url": "https://my.supernotes.app/"
   },
   "tabs": [
     {
@@ -31,48 +37,154 @@
       "url": "api-reference"
     }
   ],
-  "anchors": [
-    {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
-    },
-    {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
-    }
-  ],
   "navigation": [
     {
-      "group": "Get Started",
-      "pages": ["introduction", "quickstart", "development"]
+      "group": "",
+      "pages": ["introduction"]
     },
     {
-      "group": "Essentials",
-      "pages": ["essentials/markdown", "essentials/code", "essentials/images", "essentials/settings", "essentials/navigation"]
+      "group": "Enums",
+      "pages": ["enums/roles", "enums/status"]
     },
     {
-      "group": "API Documentation",
+      "group": "Community Creations",
+      "pages": [
+        "community-creations/supernotes-to-drafts",
+        "community-creations/ios-shortcut",
+        "community-creations/webhooks",
+        "community-creations/readwise-to-supernotes",
+        "community-creations/scriptable"
+      ]
+    },
+    {
+      "group": "Third Party",
+      "pages": ["third-party/rust-client", "third-party/supervocab"]
+    },
+    {
+      "group": "",
       "pages": ["api-reference/introduction"]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "Cards",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/cards/get-card",
+        "api-reference/cards/get-selected-cards",
+        "api-reference/cards/get-specified-cards",
+        "api-reference/cards/get-cards-since",
+        "api-reference/cards/get-deleted-cards",
+        "api-reference/cards/simple-create-card",
+        "api-reference/cards/create-cards",
+        "api-reference/cards/update-cards",
+        "api-reference/cards/enroll-in-card",
+        "api-reference/cards/remove-cards-for-me",
+        "api-reference/cards/delete-cards-for-everyone"
+      ]
+    },
+    {
+      "group": "User",
+      "pages": [
+        "api-reference/user/set-preferences",
+        "api-reference/user/set-preference-flag",
+        "api-reference/user/set-feature-preview-flag",
+        "api-reference/user/check-auth",
+        "api-reference/user/check-if-fresh-access-token",
+        "api-reference/user/get-current-user",
+        "api-reference/user/update-current-user",
+        "api-reference/user/update-current-user-bio-and-pic",
+        "api-reference/user/get-pins",
+        "api-reference/user/put-pins"
+      ]
+    },
+    {
+      "group": "Tags",
+      "pages": ["api-reference/tags/get-users-tags"]
+    },
+    {
+      "group": "Profiles",
+      "pages": [
+        "api-reference/profiles/get-current-user-profile",
+        "api-reference/profiles/get-known-owner-profiles",
+        "api-reference/profiles/get-other-user-profile",
+        "api-reference/profiles/get-specified-user-profiles"
+      ]
+    },
+    {
+      "group": "Comments",
+      "pages": [
+        "api-reference/comments/get-comments",
+        "api-reference/comments/edit-comment",
+        "api-reference/comments/create-comment",
+        "api-reference/comments/delete-comment"
+      ]
+    },
+    {
+      "group": "Members",
+      "pages": [
+        "api-reference/members/get-members",
+        "api-reference/members/attempt-join",
+        "api-reference/members/invite-member",
+        "api-reference/members/respond-to-invite",
+        "api-reference/members/modify-member",
+        "api-reference/members/delete-member"
+      ]
+    },
+    {
+      "group": "Friends",
+      "pages": [
+        "api-reference/friends/get-friends",
+        "api-reference/friends/send-friend-request",
+        "api-reference/friends/get-incoming-requests",
+        "api-reference/friends/get-outgoing-requests",
+        "api-reference/friends/accept-friendship",
+        "api-reference/friends/delete-friendship"
+      ]
+    },
+    {
+      "group": "Share",
+      "pages": [
+        "api-reference/share/get-share-codes-for-card",
+        "api-reference/share/create-share-code",
+        "api-reference/share/update-share-code",
+        "api-reference/share/delete-share-code",
+        "api-reference/share/find-card-with-share-code",
+        "api-reference/share/authed-find-card-with-share-code",
+        "api-reference/share/join-card-with-share-code"
+      ]
+    },
+    {
+      "group": "Templates",
+      "pages": [
+        "api-reference/templates/get-all-templates",
+        "api-reference/templates/edit-template",
+        "api-reference/templates/create-template",
+        "api-reference/templates/delete-template"
+      ]
+    },
+    {
+      "group": "API Keys",
+      "pages": [
+        "api-reference/api-keys/get-user-api-keys",
+        "api-reference/api-keys/modify-api-key",
+        "api-reference/api-keys/create-api-key",
+        "api-reference/api-keys/delete-api-key",
+        "api-reference/api-keys/get-user-sending-email",
+        "api-reference/api-keys/create-user-sending-email",
+        "api-reference/api-keys/delete-user-sending-email"
+      ]
+    },
+    {
+      "group": "Webhooks",
+      "pages": [
+        "api-reference/webhooks/get-user-webhooks",
+        "api-reference/webhooks/create-webhook",
+        "api-reference/webhooks/modify-webhook",
+        "api-reference/webhooks/delete-webhook"
       ]
     }
   ],
+  "feedback.thumbsRating": true,
   "footerSocials": {
-    "twitter": "https://twitter.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "twitter": "https://twitter.com/supernotesapp",
+    "linkedin": "https://www.linkedin.com/company/supernotes"
   }
 }

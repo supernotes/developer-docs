@@ -1,0 +1,26 @@
+---
+title: Youtube to iOS Shortcut
+---
+
+<Info>
+  This was originally posted by @clefshanty in the [Supernotes
+  Community](https://community.supernotes.app/t/ios-shortcut-to-post-card/1181).
+</Info>
+
+I like the embed feature in Supernotes for YouTube videos. I created a shortcut that grabs the url and the title of a YouTube video and uses that information to make a new card with the video embedded.
+![image](https://community.supernotes.app/uploads/default/optimized/1X/ac094bb3816c17402e656113d7b74d03ec4b6454_2_616x1000.jpeg)
+
+Essentially I use the Get url shortcut method to grab the title for the video I’m sharing from YouTube and save it a variable named “title”.
+
+![image](https://community.supernotes.app/uploads/default/optimized/1X/3047552eb3331cfccfd2ccf4de46c9e5fcbc72b5_2_628x1000.jpeg)
+
+I then get the url from the same method and stick that in a text method to creat the markdown necessary for embedding a YouTube video in a card.
+@[youtube](link to video)
+This markdown text is saved in a variable named “link”.
+
+Then using the link https://api.supernotes.app/v1/cards/simple in a new get url method set to post along with my API key in the header and my variables in the body along with some tags I use, the necessay info is sent to my account and creates a new card that is titled after the YouTube video with the video embedded in the card.
+
+I then use the open app method to open SuperNotes and my card should be the newest created.
+
+![image](https://community.supernotes.app/uploads/default/optimized/1X/efb3f867fc65e6515a701f378de298319361c935_2_908x1000.jpeg)
+![image](https://community.supernotes.app/uploads/default/original/1X/0f5c03d48b140fa979c0b7151cf9ebef804cb60c.jpeg)
