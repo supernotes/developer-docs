@@ -19,7 +19,8 @@
   "api": {
     "baseUrl": "https://api.supernotes.app/",
     "auth": {
-      "method": "key"
+      "method": "key",
+      "name": "my-api-key"
     }
   },
   "topbarLinks": [
