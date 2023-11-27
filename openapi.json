@@ -3,7 +3,7 @@
   "info": {
     "title": "supernotes",
     "description": "The Supernotes API – a modern and fast API for quick card creation",
-    "version": "3.0.4"
+    "version": "3.0.5"
   },
   "paths": {
     "/": {
@@ -3286,6 +3286,12 @@
             "title": "Tags",
             "default": []
           },
+          "parent_ids": {
+            "items": { "type": "string", "format": "uuid" },
+            "type": "array",
+            "title": "Parent Ids",
+            "default": []
+          },
           "source": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Source"
@@ -3326,7 +3332,7 @@
       },
       "PrefFlag": {
         "type": "integer",
-        "enum": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048],
+        "enum": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096],
         "title": "PrefFlag"
       },
       "PublicOwnerResponse": {
@@ -3525,7 +3531,7 @@
       },
       "SubscriptionDuration": {
         "type": "integer",
-        "enum": [1, 2, 3],
+        "enum": [1, 2, 3, 4],
         "title": "SubscriptionDuration"
       },
       "TemplateResponse": {
