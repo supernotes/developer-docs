@@ -20,7 +20,7 @@
     "baseUrl": "https://api.supernotes.app/",
     "auth": {
       "method": "key",
-      "name": "my-api-key"
+      "name": "Api-Key"
     }
   },
   "topbarLinks": [

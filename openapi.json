@@ -4021,10 +4021,6 @@
       }
     },
     "securitySchemes": {
-      "OAuth2PasswordBearer": {
-        "type": "oauth2",
-        "flows": { "password": { "scopes": {}, "tokenUrl": "/v1/user/login" } }
-      },
       "APIKeyHeader": { "type": "apiKey", "in": "header", "name": "Api-Key" }
     }
   }
