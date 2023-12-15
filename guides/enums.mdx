@@ -1,0 +1,56 @@
+Enums are used in the API to define different values, here are the most common ones.
+
+## Status
+
+Declaring the status of various objects, most notably cards
+
+```tsx
+-2: Junked
+-1: [only used internally]
+0: Pending cards (inbox)
+1: Unkept cards
+2: Kept cards
+```
+
+## Roles & Perms
+
+Set different roles and corresponding permissions on a card:
+
+```tsx
+enum Roles {
+  AUTHOR: 2097151
+  MODERATOR: 524287
+  EDITOR: 211951
+  CONTRIBUTOR: 207823
+  READER: 207695
+}
+```
+
+```tsx
+enum Perm {
+  VIEW_COMMENTS = 2 ** 1,
+  ADD_COMMENT = 2 ** 2,
+  MANAGE_COMMENTS = 2 ** 3,
+  EDIT_DATA = 2 ** 4,
+  ADD_CHILDREN = 2 ** 5,
+  PUBLISH_CHILDREN = 2 ** 6,
+  MANAGE_PARENTS = 2 ** 7,
+  CREATE_SHARE_CODES = 2 ** 8,
+  MANAGE_SHARE_CODES = 2 ** 9,
+  VIEW_MEMBERS = 2 ** 10,
+  MANAGE_MEMBERS = 2 ** 11,
+  DELETE_FOR_EVERYONE = 2 ** 12,
+}
+```
+
+## View Display Type
+
+Set the Noteboard to be a certain view:
+
+```tsx
+enum ViewDisplayType {
+  LIST = 1
+  BROADSHEET = 2
+  GRAPH = 4
+}
+```

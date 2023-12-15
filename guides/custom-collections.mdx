@@ -1,0 +1,136 @@
+---
+title: Custom Collections (Upcoming)
+---
+
+In the upcoming Supernotes 3.1 release, you will be able to save filtered views of cards using Custom Collections.
+
+Currently collections have a data model like so (this may change slightly before release), and custom collections will allow you to edit these and create new ones:
+
+### Tasks Collection Example
+
+```tsx
+const tasksCollection: ICollection = {
+  id: "tasks", // any string
+  name: "Tasks", // any string
+  description: "Every card with at least one unchecked todo item",
+  icon: "check-circle", // any icon available from current icon list
+  color: "blue", // any color available from current card color list
+  created_when: "2023-12-07T12:13:26.685000", // date in ISO 8601 format
+  readonly: true, // disallow new card creation within this collection
+  filter_group: {
+    op: FilterGroupOperator.AND,
+    filters: [
+      {
+        type: FilterType.STATUS,
+        op: FilterOperator.WITHIN,
+        arg: [Status.PENDING, Status.ACTIVE],
+      },
+      {
+        type: FilterType.PERMS,
+        op: FilterOperator.CAN,
+        arg: Perm.EDIT_DATA,
+      },
+      {
+        type: FilterType.CONTENT,
+        op: FilterOperator.CONTAINS,
+        arg: "- [ ]",
+      },
+    ],
+  },
+};
+```
+
+### Definitions
+
+`Status` and `Perm` definitions can be found [here](/guides/enums#roles); and `FilterType` and `FilterOperator` are defined as follows:
+
+```tsx
+enum FilterType {
+  NAME = "name",
+  MARKUP = "markup",
+  CONTENT = "content",
+  AUTHOR = "author",
+  TAG = "tag",
+  CHILD_COUNT = "child_count",
+  PARENT_COUNT = "parent_count",
+  LIKED = "liked",
+  STATUS = "status",
+  COLOR = "colors",
+  VISIBILITY = "visibility",
+  PERMS = "perms",
+  PARENT_IDS = "parent_ids",
+  ARCHIVED_PARENT_IDS = "archived_parent_ids",
+  PUBLISHED_PARENT_IDS = "published_parent_ids",
+}
+```
+
+```tsx
+enum FilterOperator {
+  EQUALS = "equals",
+  GREATER_THAN = "greater_than",
+  GREATER_THAN_OR_EQUAL = "greater_than_or_equal",
+  LESS_THAN = "less_than",
+  LESS_THAN_OR_EQUAL = "less_than_or_equal",
+  CAN = "can",
+  CONTAINS = "contains",
+  WITHIN = "within",
+}
+```
+
+### Additional Thoughts Collection Example
+
+```tsx
+const thoughtsCollection: ICollection = {
+  id: "thoughts",
+  name: "Thoughts",
+  description: "Your lonely cards – no name, content and hierarchy",
+  icon: "thought",
+  color: "pink",
+  created_when: "2023-12-07T12:13:26.685000",
+  filter_group: {
+    op: FilterGroupOperator.AND,
+    filters: [
+      {
+        type: FilterType.STATUS,
+        op: FilterOperator.WITHIN,
+        arg: [Status.PENDING, Status.ACTIVE],
+      },
+      {
+        type: FilterType.PERMS,
+        op: FilterOperator.CAN,
+        arg: Perm.EDIT_DATA,
+      },
+      {
+        op: FilterGroupOperator.OR,
+        filters: [
+          {
+            type: FilterType.NAME,
+            op: FilterOperator.EQUALS,
+            arg: "",
+          },
+          {
+            type: FilterType.CONTENT,
+            op: FilterOperator.EQUALS,
+            arg: "",
+          },
+          {
+            op: FilterGroupOperator.AND,
+            filters: [
+              {
+                type: FilterType.CHILD_COUNT,
+                op: FilterOperator.EQUALS,
+                arg: 0,
+              },
+              {
+                type: FilterType.PARENT_COUNT,
+                op: FilterOperator.EQUALS,
+                arg: 0,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+```

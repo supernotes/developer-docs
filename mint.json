@@ -45,14 +45,15 @@
       "pages": ["introduction"]
     },
     {
-      "group": "Enums",
-      "pages": ["enums/roles", "enums/status"]
+      "group": "Guides",
+      "pages": ["guides/custom-collections", "guides/enums"]
     },
     {
       "group": "Community Creations",
       "pages": [
         "community-creations/supernotes-to-drafts",
-        "community-creations/ios-shortcut",
+        "community-creations/chatgpt-ios-shortcut",
+        "community-creations/youtube-to-ios-shortcut",
         "community-creations/webhooks",
         "community-creations/readwise-to-supernotes",
         "community-creations/scriptable"
