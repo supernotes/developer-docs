@@ -25,4 +25,76 @@ Pipedream now creates a note, which respects the syntax I traditionally use for 
 
 Pretty sweet, right? This even works for Youtube videos, as Readwise Reader allows for highlighting text in the transcript!
 
-In pipedream, I had to insert a Python step to get details on the book from the Readwise API, particularly the website title and author that I use to compose the note. Feel free to ask if you have any questions on the details.
+In Pipedream, I had to insert a Python step to get details on the book from the Readwise API, particularly the website title and author that I use to compose the note.
+
+### Code Example and Instructions
+
+To compose my card after a new highlight in Readwise triggers, first I gather some additional data in to consecutive python steps which I need in the card’s markup. To begin with, I make a call to the Readwise API in order to retrieve some information on the book (which contains the book or website, and the author) using this code
+
+```python
+import requests
+
+def handler(pd: "pipedream"):
+    # Prepare inputs
+    readwise_auth = pd.inputs["readwise"]["$auth"]["access_token"]
+    highlight = pd.steps["trigger"]["event"]
+    # Request data from Readwise API
+    result = requests.get(
+        f'https://readwise.io/api/v2/books/{highlight["book_id"]}',
+        headers={"Authorization": f'Token {readwise_auth}'}
+    )
+    # Export data for use in future steps
+    return result.json()
+```
+
+Further, I prepare some pre-formatted strings
+
+```python
+import tld
+import re
+import dateutil.parser as p
+
+def get_domain_base(url):
+    dom = ""
+    try:
+        res = tld.get_tld(url, as_object=True)
+        dom = f'{res.domain}.{res.tld}'
+    except:
+        dom = url
+    return dom
+
+def get_indented_text(text):
+    prefix = "> "
+    return re.sub("\n", f"\n{prefix}", re.sub("^", prefix, text))
+
+def get_date(timestamp, date_format):
+    d = p.parse(timestamp)
+    return d.strftime(date_format)
+
+def handler(pd: "pipedream"):
+    # Set constants
+    date_format = "%d.%m.%Y"
+
+    # Prepare inputs
+    book = pd.steps["book"]["$return_value"]
+    highlight = pd.steps["trigger"]["event"]
+
+    # Get domain base
+    url = book["source_url"]
+    domain_base = get_domain_base(url)
+
+    # Get indented text
+    text = highlight["text"]
+    indented_text = get_indented_text(text)
+
+    # Get highlight date
+    book_updated = book["updated"]
+    formatted_date = get_date(book_updated, date_format)
+
+    # Return data for use in future steps
+    return {
+        "formatted_date": formatted_date,
+        "domain_base": domain_base,
+        "indented_text": indented_text
+    }
+```
