@@ -65,7 +65,7 @@
     },
     {
       "group": "",
-      "pages": ["api-reference/introduction"]
+      "pages": ["api-reference/introduction", "api-reference/resource-limits"]
     },
     {
       "group": "Cards",
