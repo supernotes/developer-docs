@@ -7,15 +7,23 @@ title: ChatGPT iOS Shortcut
   Community](https://community.supernotes.app/t/apple-shortcut-quick-note-with-chatgpt-generated-title/2127/).
 </Info>
 
-This year I learned how to actually use API's and use them with Apple Shortcuts. Thankfully SuperNotes has an awesome API so I decided to make a quick note shortcut.
+A plugin for Supernotes that utilizes the ChatGPT app and API to automatically generate a title for quick notes.
 
-One of the problems I have with making a quick note is choosing a title. So I decided to offload that to ChatGPT. Here's a screenshot of my Shortcut. It asks for text input and then sends the text to the ChatGPT app with a prompt to make a title for it.
+## Features
 
-Here's a screenshot that shows the structure. I am using the ChatGPT app. Every time you use it it will create a new chat with ChatGPT which is a little annoying, but not a big deal since you aren't using any API credits with OpenAI. You can choose GPT-4 or GPT-3.5. Use GPT-3.5 if you don't want to use up your GPT-4 credits and because this isn't anything very complex so 3.5 would work just fine.
+* Asks for text input and sends it to ChatGPT with a prompt to generate a title
+* Allows choice between GPT-4 and GPT-3.5 models
+* Compatible with Supernotes API
+* Optionally adds timestamp to title
 
-I also created a card to act as the parent card. The card is called 'Quick Notes'. I grabbed the card id and put it in the 'parent_ids' section. That is an Array and then just add whatever ID's you want.
+## Setup
 
-I also have another quick note shortcut that just adds a timestamp to the title. But I have been using this one the most. It works so great. Let me know if you have any questions.
+1. Create a new card in Supernotes and grab its ID
+2. Add the ID to the 'parent_ids' section in the plugin setup
+3. Configure the plugin to use the ChatGPT app and API
 
-![image](https://community.supernotes.app/uploads/default/original/2X/f/fbd3e63e91695f8dec712f8335d88cbb9336e421.jpeg)
+Here are some helpful screenshots shared by @Iamjmw in the [Supernotes
+  Community](https://community.supernotes.app/t/apple-shortcut-quick-note-with-chatgpt-generated-title/2127/):
+
+![image](https://community.supernotes.app/uploads/default/original/2X/b/b301cab91a8f66aa67e43f288cfdb34774ddb639.jpeg)
 ![image](https://community.supernotes.app/uploads/default/original/2X/f/fbd3e63e91695f8dec712f8335d88cbb9336e421.jpeg)

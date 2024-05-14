@@ -2,7 +2,20 @@
 title: Supernotes to Drafts
 ---
 
-[Drafts Website](https://getdrafts.com/)
+Creates a new card in Supernotes using the [Drafts](https://getdrafts.com/)' title and body.
+
+Configuration
+-------------
+
+* Replace `YOUR-SUPERNOTES-API-KEY` with your Supernotes API key.
+
+How it works
+------------
+
+1. Extracts the Draft's title and body using templates.
+2. Sends a POST request to the Supernotes API to create a new card.
+3. Logs an error and fails the action if the request fails.
+
 
 ```js
 var http = HTTP.create();
@@ -29,3 +42,9 @@ if (response.error) {
   context.fail();
 }
 ```
+
+
+Note
+----
+
+Make sure to replace `YOUR-SUPERNOTES-API-KEY` with your actual Supernotes API key.

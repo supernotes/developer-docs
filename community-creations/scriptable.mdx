@@ -1,3 +1,26 @@
+---
+title: Scriptable iOS Pinned Widget
+---
+
+A Scriptable iOS widget that displays a pinned card from Supernotes, including the card's name, content, and modification date.
+
+## Features
+
+* Displays the most recently pinned card from Supernotes
+* Displays card name, content, and modification date
+* Modification date is formatted as a medium date and short time
+* Widget background features a linear gradient effect
+* Tap on the widget to open the card directly in Supernotes app
+
+![image](https://community.supernotes.app/uploads/default/optimized/1X/931fffab86b60a651fb201cc339f993911d46f98_2_462x1000.jpeg)
+
+## Setup
+
+1. Add the API key from Supernotes to the Scriptable widget parameter
+2. Configure the widget to display the desired pinned card 
+
+Here's an example script below:
+
 ```js
 const API_KEY = args.widgetParameter;
 const cardCollection = await loadPinnedCards();
@@ -52,3 +75,12 @@ function createCardUrl(cardId) {
   return `supernotes://?cardId=${cardId}`;
 }
 ```
+
+And finally the config setting on the home screen, where the **Parameter** is a Supernotes API key:
+
+![image](https://community.supernotes.app/uploads/default/optimized/1X/848e06c9e85d69af397c3ee34a3e47095ec5a10a_2_462x1000.jpeg)
+
+## Notes
+
+* Requires the Supernotes API key for authentication
+* Widget updates dynamically with the most recently pinned card

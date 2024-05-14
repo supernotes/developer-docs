@@ -7,29 +7,21 @@ title: Readwise to Supernotes
   Community](https://community.supernotes.app/t/readwise-to-supernotes-via-pipedream/1987).
 </Info>
 
-Just recently it came to my attention that Readwise now offers an App called Reader. Readwise has been around for several years and is a tool to manage your personal highlights discovered in text somewhere in the digital sphere. Recently, they added Reader as a fully fledged Feed reader and Read-it-later client beautifully combined in a single app, which really reduces the friction I experienced with Readwise before.
 
-The fancy part is that Reader integrates the highlighting mechanism of Readwise. Plus, it offers automations for several note taking applications, such as Obsidian an Notion. Supernotes, however, is not officially supported.
+Discover a seamless way to integrate [Readwise](https://readwise.io/) with Supernotes, even though it's not official integration (yet!). Leverage the power of APIs and [Pipedream](https://pipedream.com/apps/supernotes) to create a workflow that automates note-taking.
 
-End of Story?
+### The Flow
 
-Not at all, for where there is an API, there is a way! We can use pipedream to connect both tools using their APIs.
-
-I created a workflow on pipedream (which is really lowcode) that creates a new note whenever I add a highlight to Readwise. This is as easy as selecting text in the Reader app, or in the Browser using the Readwise extension.
-
-![](https://community.supernotes.app/uploads/default/optimized/2X/a/af71de340a7ac91e2b10f21249b8ff7de84904e2_2_472x1000.jpeg)
-
-Pipedream now creates a note, which respects the syntax I traditionally use for literature notes. I can even add a personal note to the selection in Readwise, which is then also exported.
-
-![](https://community.supernotes.app/uploads/default/optimized/2X/0/0ff71b8ac24badb91f6075b32c6ab8e42cdaf75b_2_472x1000.jpeg)
-
-Pretty sweet, right? This even works for Youtube videos, as Readwise Reader allows for highlighting text in the transcript!
-
-In Pipedream, I had to insert a Python step to get details on the book from the Readwise API, particularly the website title and author that I use to compose the note.
+1. **Readwise Highlight**: Select text in the Reader app or using the Readwise extension.
+2. **Pipedream Trigger**: A new highlight in Readwise triggers the Pipedream workflow.
+3. **Get Book Details**: A Python step retrieves book details (title and author) from the Readwise API.
+4. **Create Supernotes Card**: The workflow composes a new card in Supernotes, respecting your traditional syntax for literature notes.
 
 ### Code Example and Instructions
 
-To compose my card after a new highlight in Readwise triggers, first I gather some additional data in to consecutive python steps which I need in the card’s markup. To begin with, I make a call to the Readwise API in order to retrieve some information on the book (which contains the book or website, and the author) using this code
+Get started by using two consecutive Python steps to retrieve book information and format the note. 
+
+After a new highlight is triggered in Readwise, compose your card by gathering additional data in two consecutive Python steps for the card's markup, first making a call to the Readwise API to retrieve some information on the book, which contains the book or website and the author, using the following code:
 
 ```python
 import requests
@@ -47,7 +39,7 @@ def handler(pd: "pipedream"):
     return result.json()
 ```
 
-Further, I prepare some pre-formatted strings
+Then prepare some pre-formatted strings
 
 ```python
 import tld
@@ -98,3 +90,5 @@ def handler(pd: "pipedream"):
         "indented_text": indented_text
     }
 ```
+
+Get started with Pipedream and connect Readwise to Supernotes today!

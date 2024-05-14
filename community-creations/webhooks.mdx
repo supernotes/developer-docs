@@ -1,3 +1,28 @@
+Here's how to create a new webhook in Supernotes using the Supernotes API.
+
+## Features
+
+* Creates a new webhook in Supernotes
+* Requires API key for authentication
+* Defines the webhook URL
+
+## Parameters
+
+* `ENTER_API_KEY_HERE`: Replace with your Supernotes API key
+* `ENTER_URL_HERE`: Replace with the URL for the webhook
+
+## Request
+
+* Method: `POST`
+* URL: `https://api.supernotes.app/v1/user/webhooks/`
+* Headers:
+	+ `accept: application/json`
+	+ `Api-Key: ENTER_API_KEY_HERE`
+	+ `Content-Type: application/json`
+* Body: `{"url": "ENTER_URL_HERE"}`
+
+## Example CURL command
+
 ```bash
 curl -X 'POST' \
   'https://api.supernotes.app/v1/user/webhooks/' \
@@ -8,6 +33,7 @@ curl -X 'POST' \
   "url": "ENTER_URL_HERE"
 }'
 ```
+
 
 <Note>
   Remember to remove the webhook when you’re done to avoid sending your cards to
