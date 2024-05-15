@@ -22,12 +22,13 @@ A Scriptable iOS widget that displays a pinned card from Supernotes, including t
 Here's an example script below:
 
 ```js
-const API_KEY = args.widgetParameter;
-const cardCollection = await loadPinnedCards();
-const cards = Object.values(cardCollection);
-const widget = await createCardWidget(cards[0]);
+const widget = await pinnedCardWidget();
 Script.setWidget(widget);
 Script.complete();
+
+function createCardUrl(cardId) {
+  return `supernotes://card_id=${cardId}`;
+}
 
 async function createCardWidget(card) {
   const date = new Date(Date.parse(card.data.modified_when));
@@ -37,9 +38,9 @@ async function createCardWidget(card) {
   const strDate = dateFormatter.string(date);
   const gradient = new LinearGradient();
   gradient.locations = [0, 1];
-  gradient.colors = [new Color("#ff607e"), new Color("#ff6682")];
+  gradient.colors = [new Color('#ff607e'), new Color('#ff6682')];
   const widget = new ListWidget();
-  widget.backgroundColor = new Color("#ff6682");
+  widget.backgroundColor = new Color('#ff6682');
   widget.backgroundGradient = gradient;
   // name
   const nameElement = widget.addText(card.data.name);
@@ -63,16 +64,32 @@ async function createCardWidget(card) {
   return widget;
 }
 
-async function loadPinnedCards() {
-  const req = new Request("https://api.supernotes.app/v1/user/pins");
-  req.method = "get";
-  req.headers = { "Content-Type": "application/json", "Api-Key": API_KEY };
-  const jsonResponse = await req.loadJSON();
-  return jsonResponse;
+async function createErrorWidget(errorText) {
+  const gradient = new LinearGradient();
+  gradient.locations = [0, 1];
+  gradient.colors = [new Color('#b92426'), new Color('#ad2527')];
+  const widget = new ListWidget();
+  widget.backgroundColor = new Color('#ff6682');
+  widget.backgroundGradient = gradient;
+  const errorTitleElement = widget.addText('Error');
+  errorTitleElement.font = Font.boldSystemFont(14);
+  errorTitleElement.textColor = Color.white();
+  const errorMessageElement = widget.addText(errorText);
+  errorMessageElement.font = Font.mediumSystemFont(12);
+  errorMessageElement.textColor = Color.white();
+  return widget;
 }
 
-function createCardUrl(cardId) {
-  return `supernotes://?cardId=${cardId}`;
+async function pinnedCardWidget() {
+  const req = new Request('https://api.supernotes.app/v1/user/pins');
+  req.method = 'get';
+  req.headers = { 'Content-Type': 'application/json', 'Api-Key': args.widgetParameter };
+  const jsonBody = await req.loadJSON();
+  if (req.response.statusCode !== 200) {
+    return await createErrorWidget(jsonBody.detail);
+  }
+  const firstCard = Object.values(jsonBody)[0];
+  return await createCardWidget(firstCard);
 }
 ```
 
