@@ -6,7 +6,7 @@ A Scriptable iOS widget that displays a pinned card from Supernotes, including t
 
 ## Features
 
-* Displays the most recently pinned card from Supernotes
+* Displays the first pinned card from Supernotes
 * Displays card name, content, and modification date
 * Modification date is formatted as a medium date and short time
 * Widget background features a linear gradient effect
@@ -16,10 +16,20 @@ A Scriptable iOS widget that displays a pinned card from Supernotes, including t
 
 ## Setup
 
-1. Add the API key from Supernotes to the Scriptable widget parameter
-2. Configure the widget to display the desired pinned card 
+1. Create a new script in the Scriptable app
+2. Set the contents of the script to the code below
+3. Create a Scriptable widget on your iOS home screen
+4. Configure the widget to run the script you created
+  - **Script**: the one you just created in the Scriptable app
+  - **When Interacting**: "Run Script"
+  - **Parameter**: your Supernotes API key
+5. Save the widget and you should be good to go!
 
-Here's an example script below:
+Please note: as this is a widget script, it cannot be run directly from within the Scriptable app. You *must* create a widget on the home screen to run the script.
+
+![image](https://community.supernotes.app/uploads/default/optimized/1X/848e06c9e85d69af397c3ee34a3e47095ec5a10a_2_462x1000.jpeg)
+
+Here's the example script:
 
 ```js
 const widget = await pinnedCardWidget();
@@ -88,16 +98,16 @@ async function pinnedCardWidget() {
   if (req.response.statusCode !== 200) {
     return await createErrorWidget(jsonBody.detail);
   }
-  const firstCard = Object.values(jsonBody)[0];
-  return await createCardWidget(firstCard);
+  const cards = Object.values(jsonBody)
+  if (cards.length === 0) {
+    return await createErrorWidget('No pinned cards');
+  }
+  return await createCardWidget(cards[0]);
 }
 ```
 
-And finally the config setting on the home screen, where the **Parameter** is a Supernotes API key:
-
-![image](https://community.supernotes.app/uploads/default/optimized/1X/848e06c9e85d69af397c3ee34a3e47095ec5a10a_2_462x1000.jpeg)
 
 ## Notes
 
 * Requires the Supernotes API key for authentication
-* Widget updates dynamically with the most recently pinned card
+* Widget updates dynamically (but not instantly) with the most recently pinned card
