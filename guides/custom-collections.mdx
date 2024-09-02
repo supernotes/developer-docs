@@ -1,10 +1,12 @@
 ---
-title: Custom Collections (Upcoming)
+title: Custom Collections
 ---
 
-In the upcoming Supernotes 3.1 release, you will be able to save filtered views of cards using Custom Collections.
+On Supernotes, you are able to create Custom Collections, which are a convenient way to organize cards.
 
-Currently collections have a data model like so (this may change slightly before release), and custom collections will allow you to edit these and create new ones:
+They can be thought of like "smart playlists", where they are mostly just a collection of filters with some associated metadata that are persisted and synced across your devices.
+
+The underlying format is as follows:
 
 ### Tasks Collection Example
 
@@ -46,21 +48,27 @@ const tasksCollection: ICollection = {
 
 ```tsx
 enum FilterType {
-  NAME = "name",
-  MARKUP = "markup",
-  CONTENT = "content",
-  AUTHOR = "author",
-  TAG = "tag",
-  CHILD_COUNT = "child_count",
-  PARENT_COUNT = "parent_count",
-  LIKED = "liked",
-  STATUS = "status",
-  COLOR = "colors",
-  VISIBILITY = "visibility",
-  PERMS = "perms",
-  PARENT_IDS = "parent_ids",
-  ARCHIVED_PARENT_IDS = "archived_parent_ids",
-  PUBLISHED_PARENT_IDS = "published_parent_ids",
+  CARD_ID = 'card_id',
+  NAME = 'name',
+  MARKUP = 'markup',
+  CONTENT = 'content',
+  AUTHOR = 'author',
+  MEMBER_COUNT = 'member_count',
+  TAG = 'tag',
+  TAG_COUNT = 'tag_count',
+  CHILD_COUNT = 'child_count',
+  PARENT_COUNT = 'parent_count',
+  COMMENT_COUNT = 'comment_count',
+  SHARE_LINK_COUNT = 'share_link_count',
+  LIKED = 'liked',
+  STATUS = 'status',
+  COLOR = 'color',
+  VISIBILITY = 'visibility',
+  PERMS = 'perms',
+  PARENT_IDS = 'parent_ids',
+  ARCHIVED_PARENT_IDS = 'archived_parent_ids',
+  PUBLISHED_PARENT_IDS = 'published_parent_ids',
+  BACKLINK_IDS = 'backlink_ids',
 }
 ```
 
