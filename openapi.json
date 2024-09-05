@@ -1,0 +1,5941 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "supernotes",
+    "description": "The Supernotes API – a modern and fast API for quick card creation",
+    "version": "3.1.5"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": { "307": { "description": "Successful Response" } }
+      }
+    },
+    "/v1": {
+      "get": {
+        "summary": " Version Meta",
+        "operationId": "_version_meta_v1_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/VersionMeta" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cards/{card_id}": {
+      "get": {
+        "tags": ["cards"],
+        "summary": " Get Card",
+        "description": "Get a specified card",
+        "operationId": "_get_card_v1_cards__card_id__get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransformedCardResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cards/get/select": {
+      "post": {
+        "tags": ["cards"],
+        "summary": " Get Selected Cards",
+        "description": "The \"base query\" for retrieving cards (memberships) – supports selecting, filtering, and\nordering by any implemented metric\n\nNOTE: This is a \"POST-GET\" endpoint – the method is POST (for the payload) but it GETs data",
+        "operationId": "_get_selected_cards_v1_cards_get_select_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtendedSelectCriteria"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "[card_id]": {
+                      "$ref": "#/components/schemas/TransformedCardResponse"
+                    }
+                  },
+                  "type": "object",
+                  "title": "Response  Get Selected Cards V1 Cards Get Select Post"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/cards/get/specify": {
+      "post": {
+        "tags": ["cards"],
+        "summary": " Get Specified Cards",
+        "description": "Get the full card memberships of all the card IDs passed in the request body\n\nNOTE: This is a \"POST-GET\" endpoint – the method is POST (for the payload) but it GETs data",
+        "operationId": "_get_specified_cards_v1_cards_get_specify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array",
+                "title": "Specified"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "[card_id]": {
+                      "$ref": "#/components/schemas/TransformedCardResponse"
+                    }
+                  },
+                  "type": "object",
+                  "title": "Response  Get Specified Cards V1 Cards Get Specify Post"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/cards/get/deleted": {
+      "get": {
+        "tags": ["cards"],
+        "summary": " Get Deleted Cards",
+        "description": "Get a list of recently deleted card IDs for this user",
+        "operationId": "_get_deleted_cards_v1_cards_get_deleted_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "type": "string", "format": "uuid" },
+                  "type": "array",
+                  "title": "Response  Get Deleted Cards V1 Cards Get Deleted Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/cards/simple": {
+      "post": {
+        "tags": ["cards"],
+        "summary": " Simple Create Card",
+        "description": "Create a single card with the minimum amount of data required",
+        "operationId": "_simple_create_card_v1_cards_simple_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostSimpleCard" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "207": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      { "$ref": "#/components/schemas/WrappedCardResponse" },
+                      { "$ref": "#/components/schemas/WrappedErrorResponse" }
+                    ]
+                  },
+                  "type": "object",
+                  "title": "Response  Simple Create Card V1 Cards Simple Post"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/cards/simple/{card_id}/append": {
+      "put": {
+        "tags": ["cards"],
+        "summary": " Simple Append",
+        "description": "Append content to an existing card",
+        "operationId": "_simple_append_v1_cards_simple__card_id__append_put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "string", "title": "Markup" }
+            }
+          }
+        },
+        "responses": {
+          "207": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "anyOf": [
+                      { "$ref": "#/components/schemas/WrappedCardResponse" },
+                      { "$ref": "#/components/schemas/WrappedErrorResponse" }
+                    ]
+                  },
+                  "title": "Response  Simple Append V1 Cards Simple  Card Id  Append Put"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cards/daily": {
+      "put": {
+        "tags": ["cards"],
+        "summary": " Daily Append",
+        "operationId": "_daily_append_v1_cards_daily_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DailyAppend" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "207": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      { "$ref": "#/components/schemas/WrappedCardResponse" },
+                      { "$ref": "#/components/schemas/WrappedErrorResponse" }
+                    ]
+                  },
+                  "type": "object",
+                  "title": "Response  Daily Append V1 Cards Daily Put"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/cards": {
+      "post": {
+        "tags": ["cards"],
+        "summary": " Create Cards",
+        "description": "Create cards with full control over properties",
+        "operationId": "_create_cards_v1_cards_post",
+        "security": [{ "APIKeyHeader": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "[card_id]": { "$ref": "#/components/schemas/PostCard" }
+                },
+                "title": "Cards"
+              }
+            }
+          }
+        },
+        "responses": {
+          "207": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "anyOf": [
+                      { "$ref": "#/components/schemas/WrappedCardResponse" },
+                      { "$ref": "#/components/schemas/WrappedErrorResponse" }
+                    ]
+                  },
+                  "title": "Response  Create Cards V1 Cards Post"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["cards"],
+        "summary": " Update Cards",
+        "description": "Update many cards in one call",
+        "operationId": "_update_cards_v1_cards_patch",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "snowshoe-session-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Snowshoe-Session-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "[card_id]": { "$ref": "#/components/schemas/PatchCard" }
+                },
+                "title": "Raw Updates"
+              }
+            }
+          }
+        },
+        "responses": {
+          "207": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "anyOf": [
+                      { "$ref": "#/components/schemas/WrappedCardResponse" },
+                      { "$ref": "#/components/schemas/WrappedErrorResponse" }
+                    ]
+                  },
+                  "title": "Response  Update Cards V1 Cards Patch"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cards/enroll/{card_id}": {
+      "put": {
+        "tags": ["cards"],
+        "summary": " Enroll In Card",
+        "description": "Enroll in a card – the current user will be given access to all child cards(that have been\npublished) within the specified card. If the user has already enrolled, this endpoint will\nreturn all child cards to provide idempotency.",
+        "operationId": "_enroll_in_card_v1_cards_enroll__card_id__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "[card_id]": {
+                      "$ref": "#/components/schemas/TransformedCardResponse"
+                    }
+                  },
+                  "title": "Response  Enroll In Card V1 Cards Enroll  Card Id  Put"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cards/remove": {
+      "post": {
+        "tags": ["cards"],
+        "summary": " Remove Cards For Me",
+        "description": "Completely remove access to cards for the current user",
+        "operationId": "_remove_cards_for_me_v1_cards_remove_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array",
+                "title": "Card Ids"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "207": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      { "type": "integer", "enum": [200], "const": 200 },
+                      { "type": "integer", "enum": [403], "const": 403 },
+                      { "type": "integer", "enum": [404], "const": 404 }
+                    ]
+                  },
+                  "type": "object",
+                  "title": "Response  Remove Cards For Me V1 Cards Remove Post"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/cards/delete": {
+      "post": {
+        "tags": ["cards"],
+        "summary": " Delete Cards For Everyone",
+        "description": "Completely (and irreversibly) delete cards from the Supernotes platform",
+        "operationId": "_delete_cards_for_everyone_v1_cards_delete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array",
+                "title": "Card Ids"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "207": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      { "type": "integer", "enum": [200], "const": 200 },
+                      { "type": "integer", "enum": [403], "const": 403 },
+                      { "type": "integer", "enum": [404], "const": 404 }
+                    ]
+                  },
+                  "type": "object",
+                  "title": "Response  Delete Cards For Everyone V1 Cards Delete Post"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/collections": {
+      "get": {
+        "tags": ["collections"],
+        "summary": " Get Collections",
+        "description": "Get all collections owned by the user",
+        "operationId": "_get_collections_v1_collections_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CollectionResponse"
+                  },
+                  "type": "array",
+                  "title": "Response  Get Collections V1 Collections Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/collections/deleted": {
+      "get": {
+        "tags": ["collections"],
+        "summary": " Get Deleted Collections",
+        "description": "Get the IDs of collections deleted by the user",
+        "operationId": "_get_deleted_collections_v1_collections_deleted_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "type": "string", "format": "uuid" },
+                  "type": "array",
+                  "title": "Response  Get Deleted Collections V1 Collections Deleted Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/collections/{collection_id}": {
+      "get": {
+        "tags": ["collections"],
+        "summary": " Get Collection",
+        "description": "Get the specified collection",
+        "operationId": "_get_collection_v1_collections__collection_id__get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "collection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Collection Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CollectionResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["collections"],
+        "summary": " Create Collection",
+        "description": "Create a custom collection",
+        "operationId": "_create_collection_v1_collections__collection_id__post",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "collection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Collection Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostCollection" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CollectionResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["collections"],
+        "summary": " Update Collection",
+        "description": "Update the specified collection",
+        "operationId": "_update_collection_v1_collections__collection_id__patch",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "collection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Collection Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PatchCollection" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CollectionResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["collections"],
+        "summary": " Delete Collection",
+        "description": "Delete the specified collection",
+        "operationId": "_delete_collection_v1_collections__collection_id__delete",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "collection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Collection Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/comments/{card_id}": {
+      "get": {
+        "tags": ["comments"],
+        "summary": " Get Comments",
+        "description": "Get all comments for the specified card",
+        "operationId": "_get_comments_v1_comments__card_id__get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CommentResponse" },
+                  "title": "Response  Get Comments V1 Comments  Card Id  Get"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/comments/{card_id}/{comment_id}": {
+      "post": {
+        "tags": ["comments"],
+        "summary": " Create Comment",
+        "description": "Create a new comment on the specified card",
+        "operationId": "_create_comment_v1_comments__card_id___comment_id__post",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          },
+          {
+            "name": "comment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Comment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostComment" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CommentResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["comments"],
+        "summary": " Edit Comment",
+        "description": "Update the specified comment on the specified card",
+        "operationId": "_edit_comment_v1_comments__card_id___comment_id__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          },
+          {
+            "name": "comment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Comment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PutComment" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CommentResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["comments"],
+        "summary": " Delete Comment",
+        "description": "Delete the specified comment from the specified card",
+        "operationId": "_delete_comment_v1_comments__card_id___comment_id__delete",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          },
+          {
+            "name": "comment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Comment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/friends": {
+      "get": {
+        "tags": ["friends"],
+        "summary": " Get Friends",
+        "operationId": "_get_friends_v1_friends_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FriendshipResponse"
+                  },
+                  "type": "array",
+                  "title": "Response  Get Friends V1 Friends Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      },
+      "post": {
+        "tags": ["friends"],
+        "summary": " Send Friend Request",
+        "operationId": "_send_friend_request_v1_friends_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body__send_friend_request_v1_friends_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FriendshipResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/friends/incoming": {
+      "get": {
+        "tags": ["friends"],
+        "summary": " Get Incoming Requests",
+        "operationId": "_get_incoming_requests_v1_friends_incoming_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FriendshipResponse"
+                  },
+                  "type": "array",
+                  "title": "Response  Get Incoming Requests V1 Friends Incoming Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/friends/outgoing": {
+      "get": {
+        "tags": ["friends"],
+        "summary": " Get Outgoing Requests",
+        "operationId": "_get_outgoing_requests_v1_friends_outgoing_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FriendshipResponse"
+                  },
+                  "type": "array",
+                  "title": "Response  Get Outgoing Requests V1 Friends Outgoing Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/friends/{other_user_id}": {
+      "put": {
+        "tags": ["friends"],
+        "summary": " Accept Friendship",
+        "operationId": "_accept_friendship_v1_friends__other_user_id__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "other_user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Other User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FriendshipResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["friends"],
+        "summary": " Delete Friendship",
+        "operationId": "_delete_friendship_v1_friends__other_user_id__delete",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "other_user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Other User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "title": "Response  Delete Friendship V1 Friends  Other User Id  Delete"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/keys": {
+      "get": {
+        "tags": ["api keys", "integrations"],
+        "summary": " Get User Api Keys",
+        "description": "Get all API keys for the user",
+        "operationId": "_get_user_api_keys_v1_keys_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/ApiKeyResponse" },
+                  "type": "array",
+                  "title": "Response  Get User Api Keys V1 Keys Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      },
+      "put": {
+        "tags": ["api keys", "integrations"],
+        "summary": " Modify Api Key",
+        "description": "Modify an API key for the user",
+        "operationId": "_modify_api_key_v1_keys_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PutApiKey" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiKeyResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      },
+      "post": {
+        "tags": ["api keys", "integrations"],
+        "summary": " Create Api Key",
+        "description": "Create a new API key for the user",
+        "operationId": "_create_api_key_v1_keys_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiKeyResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/keys/delete": {
+      "post": {
+        "tags": ["api keys", "integrations"],
+        "summary": " Delete Api Key",
+        "description": "Delete an API key for the user",
+        "operationId": "_delete_api_key_v1_keys_delete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body__delete_api_key_v1_keys_delete_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/keys/email": {
+      "get": {
+        "tags": ["api keys", "integrations"],
+        "summary": " Get User Sending Email",
+        "description": "Get the user's email-sending key",
+        "operationId": "_get_user_sending_email_v1_keys_email_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiKeyResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      },
+      "post": {
+        "tags": ["api keys", "integrations"],
+        "summary": " Create User Sending Email",
+        "description": "Create a new email-sending key for a user",
+        "operationId": "_create_user_sending_email_v1_keys_email_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiKeyResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      },
+      "delete": {
+        "tags": ["api keys", "integrations"],
+        "summary": " Delete User Sending Email",
+        "description": "Delete a user's email-sending key",
+        "operationId": "_delete_user_sending_email_v1_keys_email_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/members/{card_id}": {
+      "get": {
+        "tags": ["members"],
+        "summary": " Get Members",
+        "description": "Get data about members of this card (permissions, statuses, etc)",
+        "operationId": "_get_members_v1_members__card_id__get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "[card_id]": { "$ref": "#/components/schemas/Member" }
+                  },
+                  "title": "Response  Get Members V1 Members  Card Id  Get"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/members/{card_id}/attempt-join": {
+      "post": {
+        "tags": ["members"],
+        "summary": " Attempt Join",
+        "description": "Attempt to join a card (based on having access to some arbitrary ancestor card)",
+        "operationId": "_attempt_join_v1_members__card_id__attempt_join_post",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransformedCardResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/members/{card_id}/invite/{user_id}": {
+      "post": {
+        "tags": ["members"],
+        "summary": " Invite Member",
+        "description": "Invite a friend directly to an existing card",
+        "operationId": "_invite_member_v1_members__card_id__invite__user_id__post",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "User Id" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Body__invite_member_v1_members__card_id__invite__user_id__post"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Member" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/members/{card_id}/invite/{invite_response}": {
+      "put": {
+        "tags": ["members"],
+        "summary": " Respond To Invite",
+        "description": "Respond to a card invitation",
+        "operationId": "_respond_to_invite_v1_members__card_id__invite__invite_response__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "invite_response",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": ["accept", "reject"],
+              "type": "string",
+              "title": "Invite Response"
+            }
+          },
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/members/{card_id}/{target_user_id}": {
+      "put": {
+        "tags": ["members"],
+        "summary": " Modify Member",
+        "description": "Update another user's card membership",
+        "operationId": "_modify_member_v1_members__card_id___target_user_id__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          },
+          {
+            "name": "target_user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Target User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body__modify_member_v1_members__card_id___target_user_id__put"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "title": "Response  Modify Member V1 Members  Card Id   Target User Id  Put"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["members"],
+        "summary": " Delete Member",
+        "description": "Delete the member from the specified card",
+        "operationId": "_delete_member_v1_members__card_id___target_user_id__delete",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          },
+          {
+            "name": "target_user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Target User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/profiles": {
+      "get": {
+        "tags": ["profiles"],
+        "summary": " Get Current User Profile",
+        "description": "Get the authenticated user's public profile",
+        "operationId": "_get_current_user_profile_v1_profiles_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserPublicProfile" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/profiles/known": {
+      "get": {
+        "tags": ["profiles"],
+        "summary": " Get Known Owner Profiles",
+        "description": "Get the public profiles for all card owners the current user knows",
+        "operationId": "_get_known_owner_profiles_v1_profiles_known_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/UserPublicProfile" },
+                  "type": "array",
+                  "title": "Response  Get Known Owner Profiles V1 Profiles Known Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/profiles/{user_id}": {
+      "get": {
+        "tags": ["profiles"],
+        "summary": " Get Other User Profile",
+        "description": "Get the specified user's public profile",
+        "operationId": "_get_other_user_profile_v1_profiles__user_id__get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "User Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserPublicProfile" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/profiles/specify": {
+      "post": {
+        "tags": ["profiles"],
+        "summary": " Get Specified User Profiles",
+        "description": "Get the public profiles for a specified list of users",
+        "operationId": "_get_specified_user_profiles_v1_profiles_specify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array",
+                "title": "Specified"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/UserPublicProfile" },
+                  "type": "array",
+                  "title": "Response  Get Specified User Profiles V1 Profiles Specify Post"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/synth/credits": {
+      "get": {
+        "tags": ["review"],
+        "summary": " Get Synth Credits",
+        "description": "Get the number of synthetic credits the user has",
+        "operationId": "_get_synth_credits_v1_synth_credits_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SynthCreditsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/sharing/{card_id}": {
+      "get": {
+        "tags": ["share"],
+        "summary": " Get Share Codes For Card",
+        "operationId": "_get_share_codes_for_card_v1_sharing__card_id__get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ShareCodeResponse" },
+                  "title": "Response  Get Share Codes For Card V1 Sharing  Card Id  Get"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["share"],
+        "summary": " Create Share Code",
+        "description": "Create a new share code (if user has permission)",
+        "operationId": "_create_share_code_v1_sharing__card_id__post",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ShareCodeRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ShareCodeResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sharing/{card_id}/{share_code_id}": {
+      "put": {
+        "tags": ["share"],
+        "summary": " Update Share Code",
+        "description": "Modify an existing share code (if user has permission)",
+        "operationId": "_update_share_code_v1_sharing__card_id___share_code_id__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "share_code_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Share Code Id"
+            }
+          },
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ShareCodeRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ShareCodeResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["share"],
+        "summary": " Delete Share Code",
+        "description": "Delete an existing share code (if user has permission)",
+        "operationId": "_delete_share_code_v1_sharing__card_id___share_code_id__delete",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "share_code_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Share Code Id"
+            }
+          },
+          {
+            "name": "card_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Card Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sharing/code/{code}": {
+      "get": {
+        "tags": ["share"],
+        "summary": " Find Card With Share Code",
+        "description": "Retrieve card data (and share code metadata) by specifying a share code.",
+        "operationId": "_find_card_with_share_code_v1_sharing_code__code__get",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Code" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompleteShareResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sharing/code/{code}/authed": {
+      "get": {
+        "tags": ["share"],
+        "summary": " Authed Find Card With Share Code",
+        "description": "Retrieve card data (and share code metadata) by specifying a share code.\nCheck for auth headers and if the user already has access to this card, return a 409 error.",
+        "operationId": "_authed_find_card_with_share_code_v1_sharing_code__code__authed_get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Code" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompleteShareResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sharing/code/{code}/join": {
+      "post": {
+        "tags": ["share"],
+        "summary": " Join Card With Share Code",
+        "description": "Join a card via share code (if allowed)",
+        "operationId": "_join_card_with_share_code_v1_sharing_code__code__join_post",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Code" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransformedCardResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tags": {
+      "get": {
+        "tags": ["tags"],
+        "summary": " Get Users Tags",
+        "description": "Get all tags known to the user",
+        "operationId": "_get_users_tags_v1_tags_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "type": "string" },
+                  "type": "array",
+                  "title": "Response  Get Users Tags V1 Tags Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/templates": {
+      "get": {
+        "tags": ["templates"],
+        "summary": " Get All Templates",
+        "description": "Get all templates for this user",
+        "operationId": "_get_all_templates_v1_templates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/TemplateResponse" },
+                  "type": "array",
+                  "title": "Response  Get All Templates V1 Templates Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/templates/{template_id}": {
+      "post": {
+        "tags": ["templates"],
+        "summary": " Create Template",
+        "description": "Create a new template",
+        "operationId": "_create_template_v1_templates__template_id__post",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostTemplate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TemplateResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["templates"],
+        "summary": " Edit Template",
+        "description": "Update the specified template",
+        "operationId": "_edit_template_v1_templates__template_id__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PutTemplate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TemplateResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["templates"],
+        "summary": " Delete Template",
+        "description": "Delete the specified template",
+        "operationId": "_delete_template_v1_templates__template_id__delete",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/prefs": {
+      "patch": {
+        "tags": ["user", "preferences"],
+        "summary": " Set Preferences",
+        "description": "Sets multiple preferences for the user",
+        "operationId": "_set_preferences_v1_user_prefs_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdatePrefs" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserPrefs" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/user/prefs/flag/{pref_flag}": {
+      "put": {
+        "tags": ["user", "preferences"],
+        "summary": " Set Preference Flag",
+        "description": "Sets a boolean preference flag for the user",
+        "operationId": "_set_preference_flag_v1_user_prefs_flag__pref_flag__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "pref_flag",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/PrefFlag" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body__set_preference_flag_v1_user_prefs_flag__pref_flag__put"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/prefs/feature-preview/{feature_flag}": {
+      "put": {
+        "tags": ["user", "preferences"],
+        "summary": " Set Feature Preview Flag",
+        "description": "Sets a boolean feature preview flag for the user",
+        "operationId": "_set_feature_preview_flag_v1_user_prefs_feature_preview__feature_flag__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "feature_flag",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/FeaturePreviewFlag" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body__set_feature_preview_flag_v1_user_prefs_feature_preview__feature_flag__put"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/emails": {
+      "get": {
+        "tags": ["user"],
+        "summary": " Get User Email Addresses",
+        "description": "Get all emails for a user",
+        "operationId": "_get_user_email_addresses_v1_user_emails_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EmailAddressResponse"
+                  },
+                  "type": "array",
+                  "title": "Response  Get User Email Addresses V1 User Emails Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/user/emails/{email_id}": {
+      "get": {
+        "tags": ["user"],
+        "summary": " Get Email",
+        "operationId": "_get_email_v1_user_emails__email_id__get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "email_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Email Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailAddressResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["user"],
+        "summary": " Delete Email",
+        "operationId": "_delete_email_v1_user_emails__email_id__delete",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "email_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Email Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/emails/{email_id}/primary": {
+      "put": {
+        "tags": ["user"],
+        "summary": " Make Email Primary",
+        "operationId": "_make_email_primary_v1_user_emails__email_id__primary_put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "email_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Email Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessMessage" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/token": {
+      "get": {
+        "tags": ["user"],
+        "summary": " Check Auth",
+        "description": "Check if using a valid authentication token and return the associated User ID",
+        "operationId": "_check_auth_v1_user_token_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthCheckResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/user/token/fresh": {
+      "get": {
+        "tags": ["user"],
+        "summary": " Check If Fresh Access Token",
+        "description": "Check if the access token is 'fresh' and return the associated User ID",
+        "operationId": "_check_if_fresh_access_token_v1_user_token_fresh_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/user": {
+      "get": {
+        "tags": ["user"],
+        "summary": " Get Current User",
+        "description": "Get the authenticated user's information, including subscription details",
+        "operationId": "_get_current_user_v1_user_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserAccount" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      },
+      "put": {
+        "tags": ["user"],
+        "summary": " Update Current User",
+        "description": "Update the authenticated user's personal information",
+        "operationId": "_update_current_user_v1_user_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserUpdateRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserTwoFaced" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/user/bio-and-pic": {
+      "put": {
+        "tags": ["user"],
+        "summary": " Update Current User Bio And Pic",
+        "description": "Update a public user's profile bio and image",
+        "operationId": "_update_current_user_bio_and_pic_v1_user_bio_and_pic_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserPublicProfileUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserBioPhoto" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/user/pins": {
+      "get": {
+        "tags": ["user"],
+        "summary": " Get Pins",
+        "description": "Get the authenticated user's pins",
+        "operationId": "_get_pins_v1_user_pins_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "[card_id]": {
+                      "$ref": "#/components/schemas/TransformedCardResponse"
+                    }
+                  },
+                  "type": "object",
+                  "title": "Response  Get Pins V1 User Pins Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      },
+      "put": {
+        "tags": ["user"],
+        "summary": " Update Pins",
+        "description": "Modify which cards the user has 'pinned'",
+        "operationId": "_update_pins_v1_user_pins_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  { "$ref": "#/components/schemas/UserPinsUpdateRequest" },
+                  {
+                    "items": { "type": "string", "format": "uuid" },
+                    "type": "array"
+                  }
+                ],
+                "title": "Pins Update"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "type": "string", "format": "uuid" },
+                  "type": "array",
+                  "title": "Response  Update Pins V1 User Pins Put"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/webhooks": {
+      "get": {
+        "tags": ["webhooks", "integrations"],
+        "summary": " Get User Webhooks",
+        "operationId": "_get_user_webhooks_v1_webhooks_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/WebhookResponse" },
+                  "type": "array",
+                  "title": "Response  Get User Webhooks V1 Webhooks Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      },
+      "post": {
+        "tags": ["webhooks", "integrations"],
+        "summary": " Create Webhook",
+        "operationId": "_create_webhook_v1_webhooks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostWebhook" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WebhookResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/webhooks/{webhook_id}": {
+      "put": {
+        "tags": ["webhooks", "integrations"],
+        "summary": " Modify Webhook",
+        "operationId": "_modify_webhook_v1_webhooks__webhook_id__put",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "webhook_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Webhook Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PutWebhook" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WebhookResponse" }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["webhooks", "integrations"],
+        "summary": " Delete Webhook",
+        "operationId": "_delete_webhook_v1_webhooks__webhook_id__delete",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "webhook_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Webhook Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "4XX": {
+            "description": "Unified Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnifiedError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccessLevel": {
+        "type": "integer",
+        "enum": [-1, 0, 1, 2, 3],
+        "title": "AccessLevel"
+      },
+      "ApiKeyResponse": {
+        "properties": {
+          "data": { "type": "string", "title": "Data" },
+          "enabled": { "type": "boolean", "title": "Enabled" },
+          "expires_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Expires When"
+          },
+          "last_used_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Last Used When"
+          }
+        },
+        "type": "object",
+        "required": ["data", "enabled", "expires_when", "last_used_when"],
+        "title": "ApiKeyResponse"
+      },
+      "AppearanceMode": {
+        "type": "integer",
+        "enum": [-1, 0, 1],
+        "title": "AppearanceMode"
+      },
+      "AppearanceTheme": {
+        "type": "integer",
+        "enum": [1, 2, 3, 4],
+        "title": "AppearanceTheme"
+      },
+      "ArchivedParentIdsFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["archived_parent_ids"],
+            "const": "archived_parent_ids",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["contains"],
+            "const": "contains",
+            "title": "Op"
+          },
+          "arg": { "type": "string", "format": "uuid", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "ArchivedParentIdsFilter"
+      },
+      "AuthCheckResponse": {
+        "properties": {
+          "user_id": { "type": "string", "format": "uuid", "title": "User Id" }
+        },
+        "type": "object",
+        "required": ["user_id"],
+        "title": "AuthCheckResponse"
+      },
+      "AuthorFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["author"],
+            "const": "author",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["equals"],
+            "const": "equals",
+            "title": "Op"
+          },
+          "arg": { "type": "string", "format": "uuid", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "AuthorFilter"
+      },
+      "BackendFilterGroupOperator": {
+        "type": "string",
+        "enum": ["and", "or"],
+        "title": "BackendFilterGroupOperator"
+      },
+      "BackendFilterGroupSchema": {
+        "properties": {
+          "operator": {
+            "$ref": "#/components/schemas/BackendFilterGroupOperator"
+          },
+          "filters": {
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/StringFilter" },
+                { "$ref": "#/components/schemas/IntFilter" },
+                { "$ref": "#/components/schemas/BoolFilter" },
+                { "$ref": "#/components/schemas/BackendFilterGroupSchema" }
+              ]
+            },
+            "type": "array",
+            "title": "Filters"
+          }
+        },
+        "type": "object",
+        "required": ["operator", "filters"],
+        "title": "BackendFilterGroupSchema"
+      },
+      "BackendFilterOperator": {
+        "type": "string",
+        "enum": [
+          "equals",
+          "does_not_equal",
+          "greater_than",
+          "less_than",
+          "contains",
+          "does_not_contain"
+        ],
+        "title": "BackendFilterOperator"
+      },
+      "BacklinkIdsFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["backlink_ids"],
+            "const": "backlink_ids",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["contains"],
+            "const": "contains",
+            "title": "Op"
+          },
+          "arg": { "type": "string", "format": "uuid", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "BacklinkIdsFilter"
+      },
+      "Body__delete_api_key_v1_keys_delete_post": {
+        "properties": { "api_key": { "type": "string", "title": "Api Key" } },
+        "type": "object",
+        "required": ["api_key"],
+        "title": "Body__delete_api_key_v1_keys_delete_post"
+      },
+      "Body__invite_member_v1_members__card_id__invite__user_id__post": {
+        "properties": {
+          "perms": {
+            "allOf": [{ "$ref": "#/components/schemas/Role" }],
+            "default": 1318
+          }
+        },
+        "type": "object",
+        "title": "Body__invite_member_v1_members__card_id__invite__user_id__post"
+      },
+      "Body__modify_member_v1_members__card_id___target_user_id__put": {
+        "properties": {
+          "new_perms": { "type": "integer", "title": "New Perms" }
+        },
+        "type": "object",
+        "required": ["new_perms"],
+        "title": "Body__modify_member_v1_members__card_id___target_user_id__put"
+      },
+      "Body__send_friend_request_v1_friends_post": {
+        "properties": {
+          "email_or_username": {
+            "anyOf": [
+              { "type": "string", "maxLength": 32, "minLength": 3 },
+              { "type": "string", "maxLength": 64, "format": "email" }
+            ],
+            "title": "Email Or Username"
+          }
+        },
+        "type": "object",
+        "required": ["email_or_username"],
+        "title": "Body__send_friend_request_v1_friends_post"
+      },
+      "Body__set_feature_preview_flag_v1_user_prefs_feature_preview__feature_flag__put": {
+        "properties": {
+          "flag_value": { "type": "boolean", "title": "Flag Value" }
+        },
+        "type": "object",
+        "required": ["flag_value"],
+        "title": "Body__set_feature_preview_flag_v1_user_prefs_feature_preview__feature_flag__put"
+      },
+      "Body__set_preference_flag_v1_user_prefs_flag__pref_flag__put": {
+        "properties": {
+          "pref_value": { "type": "boolean", "title": "Pref Value" }
+        },
+        "type": "object",
+        "required": ["pref_value"],
+        "title": "Body__set_preference_flag_v1_user_prefs_flag__pref_flag__put"
+      },
+      "BoolFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["liked"],
+            "const": "liked",
+            "title": "Type"
+          },
+          "operator": {
+            "anyOf": [
+              { "type": "string", "enum": ["equals"], "const": "equals" },
+              {
+                "type": "string",
+                "enum": ["does_not_equal"],
+                "const": "does_not_equal"
+              }
+            ],
+            "title": "Operator"
+          },
+          "arg": { "type": "boolean", "title": "Arg" }
+        },
+        "type": "object",
+        "required": ["type", "operator", "arg"],
+        "title": "BoolFilter"
+      },
+      "CardIdFilterScalar": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["card_id"],
+            "const": "card_id",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["equals"],
+            "const": "equals",
+            "title": "Op"
+          },
+          "arg": { "type": "string", "format": "uuid", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "CardIdFilterScalar"
+      },
+      "CardIdFilterVector": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["card_id"],
+            "const": "card_id",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["within"],
+            "const": "within",
+            "title": "Op"
+          },
+          "arg": {
+            "items": { "type": "string", "format": "uuid" },
+            "type": "array",
+            "title": "Arg"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "CardIdFilterVector"
+      },
+      "ChildCountFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["child_count"],
+            "const": "child_count",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "greater_than",
+              "greater_than_or_equal",
+              "less_than",
+              "less_than_or_equal"
+            ],
+            "title": "Op"
+          },
+          "arg": {
+            "anyOf": [{ "type": "integer" }, { "type": "number" }],
+            "title": "Arg"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "ChildCountFilter"
+      },
+      "CollectionResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "spec": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CollectionSpecReference" },
+              { "$ref": "#/components/schemas/CollectionSpecDefined-Output" }
+            ],
+            "title": "Spec"
+          },
+          "view": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/StoredViewData" },
+              { "type": "null" }
+            ]
+          },
+          "created_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created When"
+          },
+          "order": {
+            "anyOf": [{ "type": "string", "maxLength": 8 }, { "type": "null" }],
+            "title": "Order"
+          },
+          "modified_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Modified When"
+          }
+        },
+        "type": "object",
+        "required": ["id", "spec", "created_when"],
+        "title": "CollectionResponse"
+      },
+      "CollectionSpecDefined-Input": {
+        "properties": {
+          "name": { "type": "string", "maxLength": 128, "title": "Name" },
+          "description": {
+            "type": "string",
+            "maxLength": 256,
+            "title": "Description"
+          },
+          "icon": { "type": "string", "maxLength": 64, "title": "Icon" },
+          "filter_group": { "$ref": "#/components/schemas/FilterGroup-Input" },
+          "color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["name", "description", "icon", "filter_group"],
+        "title": "CollectionSpecDefined"
+      },
+      "CollectionSpecDefined-Output": {
+        "properties": {
+          "name": { "type": "string", "maxLength": 128, "title": "Name" },
+          "description": {
+            "type": "string",
+            "maxLength": 256,
+            "title": "Description"
+          },
+          "icon": { "type": "string", "maxLength": 64, "title": "Icon" },
+          "filter_group": { "$ref": "#/components/schemas/FilterGroup-Output" },
+          "color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["name", "description", "icon", "filter_group"],
+        "title": "CollectionSpecDefined"
+      },
+      "CollectionSpecReference": {
+        "properties": {
+          "pre_id": { "$ref": "#/components/schemas/PreconfiguredCollectionId" }
+        },
+        "type": "object",
+        "required": ["pre_id"],
+        "title": "CollectionSpecReference"
+      },
+      "ColorFilterScalar": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["color"],
+            "const": "color",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["equals"],
+            "const": "equals",
+            "title": "Op"
+          },
+          "arg": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ]
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op"],
+        "title": "ColorFilterScalar"
+      },
+      "ColorFilterVector": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["color"],
+            "const": "color",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["within"],
+            "const": "within",
+            "title": "Op"
+          },
+          "arg": {
+            "items": { "$ref": "#/components/schemas/CoreColor" },
+            "type": "array",
+            "title": "Arg"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "ColorFilterVector"
+      },
+      "CommentCountFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["comment_count"],
+            "const": "comment_count",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "greater_than",
+              "greater_than_or_equal",
+              "less_than",
+              "less_than_or_equal"
+            ],
+            "title": "Op"
+          },
+          "arg": {
+            "anyOf": [{ "type": "integer" }, { "type": "number" }],
+            "title": "Arg"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "CommentCountFilter"
+      },
+      "CommentResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "card_id": { "type": "string", "format": "uuid", "title": "Card Id" },
+          "user_id": { "type": "string", "format": "uuid", "title": "User Id" },
+          "markup": { "type": "string", "title": "Markup" },
+          "html": { "type": "string", "title": "Html" },
+          "created_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created When"
+          },
+          "modified_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Modified When"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "card_id",
+          "user_id",
+          "markup",
+          "html",
+          "created_when"
+        ],
+        "title": "CommentResponse"
+      },
+      "CompleteCardResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "name": { "type": "string", "title": "Name" },
+          "html": { "type": "string", "title": "Html" },
+          "color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ]
+          },
+          "icon": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Icon"
+          },
+          "tags": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Tags"
+          },
+          "owner_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Owner Id"
+          },
+          "created_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created When"
+          },
+          "modified_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Modified When"
+          },
+          "owner": { "$ref": "#/components/schemas/PublicOwnerResponse" },
+          "trusted": { "type": "boolean", "title": "Trusted" },
+          "likes": { "type": "integer", "title": "Likes" },
+          "comment_count": { "type": "integer", "title": "Comment Count" },
+          "public_child_count": {
+            "type": "integer",
+            "title": "Public Child Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "html",
+          "color",
+          "icon",
+          "tags",
+          "owner_id",
+          "created_when",
+          "modified_when",
+          "owner",
+          "trusted",
+          "likes",
+          "comment_count",
+          "public_child_count"
+        ],
+        "title": "CompleteCardResponse"
+      },
+      "CompleteShareResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "card_id": { "type": "string", "format": "uuid", "title": "Card Id" },
+          "owner_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Owner Id"
+          },
+          "code": { "type": "string", "title": "Code" },
+          "granted_perms": { "$ref": "#/components/schemas/Role" },
+          "card": { "$ref": "#/components/schemas/CompleteCardResponse" }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "card_id",
+          "owner_id",
+          "code",
+          "granted_perms",
+          "card"
+        ],
+        "title": "CompleteShareResponse"
+      },
+      "ContentFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["content"],
+            "const": "content",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["equals", "contains", "within", "regex"],
+            "title": "Op"
+          },
+          "arg": { "type": "string", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "ContentFilter"
+      },
+      "CoreColor": {
+        "enum": ["blue", "green", "orange", "pink", "purple", "red", "yellow"],
+        "title": "CoreColor",
+        "type": "string"
+      },
+      "DailyAppend": {
+        "properties": {
+          "markup": { "type": "string", "title": "Markup" },
+          "format": {
+            "type": "string",
+            "enum": ["plain", "todo"],
+            "title": "Format",
+            "default": "todo"
+          },
+          "parent_id": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Parent Id"
+          },
+          "tags": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Tags",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": ["markup"],
+        "title": "DailyAppend"
+      },
+      "DatetimeRangeSchema": {
+        "properties": {
+          "from_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "From When"
+          },
+          "to_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "To When"
+          }
+        },
+        "type": "object",
+        "title": "DatetimeRangeSchema"
+      },
+      "EmailAddressResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "email": {
+            "type": "string",
+            "maxLength": 64,
+            "format": "email",
+            "title": "Email"
+          },
+          "verified_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Verified When"
+          },
+          "primary": { "type": "boolean", "title": "Primary" }
+        },
+        "type": "object",
+        "required": ["id", "email", "verified_when", "primary"],
+        "title": "EmailAddressResponse"
+      },
+      "ExtendedCardDataResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "owner_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Owner Id"
+          },
+          "name": { "type": "string", "title": "Name" },
+          "markup": { "type": "string", "title": "Markup" },
+          "html": { "type": "string", "title": "Html" },
+          "ydoc": { "type": "string", "title": "Ydoc" },
+          "icon": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Icon"
+          },
+          "tags": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Tags"
+          },
+          "color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ]
+          },
+          "created_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created When"
+          },
+          "modified_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Modified When"
+          },
+          "modified_by_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Modified By Id"
+          },
+          "synced_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Synced When"
+          },
+          "meta": {
+            "additionalProperties": {
+              "anyOf": [
+                { "type": "string" },
+                { "type": "integer" },
+                { "type": "number" },
+                { "type": "boolean" }
+              ]
+            },
+            "type": "object",
+            "title": "Meta"
+          },
+          "targeted_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Targeted When"
+          },
+          "comment_count": { "type": "integer", "title": "Comment Count" },
+          "likes": { "type": "integer", "title": "Likes" },
+          "member_count": { "type": "integer", "title": "Member Count" },
+          "public_child_count": {
+            "type": "integer",
+            "title": "Public Child Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "owner_id",
+          "name",
+          "markup",
+          "html",
+          "ydoc",
+          "icon",
+          "tags",
+          "color",
+          "created_when",
+          "modified_when",
+          "modified_by_id",
+          "synced_when",
+          "meta",
+          "targeted_when",
+          "comment_count",
+          "likes",
+          "member_count",
+          "public_child_count"
+        ],
+        "title": "ExtendedCardDataResponse"
+      },
+      "ExtendedCardMembershipResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "liked": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Liked"
+          },
+          "personal_tags": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Personal Tags"
+          },
+          "personal_color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ]
+          },
+          "perms": { "$ref": "#/components/schemas/Role" },
+          "via_type": { "$ref": "#/components/schemas/MembershipCreatedVia" },
+          "via_id": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Via Id"
+          },
+          "created_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created When"
+          },
+          "modified_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Modified When"
+          },
+          "enrolled_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Enrolled When"
+          },
+          "opened_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Opened When"
+          },
+          "auto_publish_children": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Auto Publish Children"
+          },
+          "view": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/StoredViewData" },
+              { "type": "null" }
+            ]
+          },
+          "visibility": { "$ref": "#/components/schemas/Visibility" },
+          "status": { "$ref": "#/components/schemas/Status" },
+          "total_child_count": {
+            "type": "integer",
+            "title": "Total Child Count"
+          },
+          "share_link_count": { "type": "integer", "title": "Share Link Count" }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "liked",
+          "personal_tags",
+          "personal_color",
+          "perms",
+          "via_type",
+          "via_id",
+          "created_when",
+          "modified_when",
+          "enrolled_when",
+          "opened_when",
+          "auto_publish_children",
+          "view",
+          "visibility",
+          "status",
+          "total_child_count",
+          "share_link_count"
+        ],
+        "title": "ExtendedCardMembershipResponse"
+      },
+      "ExtendedCardParentResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "owner_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Owner Id"
+          },
+          "parent_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Parent Id"
+          },
+          "child_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Child Id"
+          },
+          "created_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created When"
+          },
+          "publishing_perms": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Role" },
+              { "type": "null" }
+            ]
+          },
+          "archived": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Archived"
+          },
+          "parent_membership_status": { "$ref": "#/components/schemas/Status" }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "owner_id",
+          "parent_id",
+          "child_id",
+          "created_when",
+          "publishing_perms",
+          "archived",
+          "parent_membership_status"
+        ],
+        "title": "ExtendedCardParentResponse"
+      },
+      "ExtendedSelectCriteria": {
+        "properties": {
+          "include_membership_statuses": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/Status" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Include Membership Statuses"
+          },
+          "parent_id": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Parent Id"
+          },
+          "search": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Search"
+          },
+          "filter_group": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/BackendFilterGroupSchema" },
+              { "$ref": "#/components/schemas/FilterGroup-Input" },
+              { "type": "null" }
+            ],
+            "title": "Filter Group"
+          },
+          "include": {
+            "anyOf": [
+              {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Include"
+          },
+          "exclude": {
+            "anyOf": [
+              {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Exclude"
+          },
+          "changed_since": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Changed Since"
+          },
+          "targeted_or_created_when": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/DatetimeRangeSchema" },
+              { "type": "null" }
+            ]
+          },
+          "created_when": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/DatetimeRangeSchema" },
+              { "type": "null" }
+            ]
+          },
+          "modified_when": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/DatetimeRangeSchema" },
+              { "type": "null" }
+            ]
+          },
+          "sort_type": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/SortType" },
+              { "type": "null" }
+            ]
+          },
+          "sort_ascending": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Sort Ascending"
+          },
+          "limit": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "title": "ExtendedSelectCriteria"
+      },
+      "FeaturePreviewFlag": {
+        "type": "integer",
+        "enum": [1, 2],
+        "title": "FeaturePreviewFlag"
+      },
+      "FilterGroup-Input": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["group"],
+            "const": "group",
+            "title": "Type"
+          },
+          "op": { "$ref": "#/components/schemas/FilterGroupOperator" },
+          "filters": {
+            "items": {
+              "oneOf": [
+                { "$ref": "#/components/schemas/FilterGroup-Input" },
+                {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/CardIdFilterScalar" },
+                    { "$ref": "#/components/schemas/CardIdFilterVector" }
+                  ],
+                  "discriminator": {
+                    "propertyName": "op",
+                    "mapping": {
+                      "equals": "#/components/schemas/CardIdFilterScalar",
+                      "within": "#/components/schemas/CardIdFilterVector"
+                    }
+                  }
+                },
+                { "$ref": "#/components/schemas/NameFilter" },
+                { "$ref": "#/components/schemas/MarkupFilter" },
+                { "$ref": "#/components/schemas/ContentFilter" },
+                { "$ref": "#/components/schemas/AuthorFilter" },
+                { "$ref": "#/components/schemas/MemberCountFilter" },
+                { "$ref": "#/components/schemas/TagFilter" },
+                { "$ref": "#/components/schemas/TagCountFilter" },
+                { "$ref": "#/components/schemas/ChildCountFilter" },
+                { "$ref": "#/components/schemas/ParentCountFilter" },
+                { "$ref": "#/components/schemas/CommentCountFilter" },
+                { "$ref": "#/components/schemas/ShareLinkCountFilter" },
+                { "$ref": "#/components/schemas/LikedFilter" },
+                {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/StatusFilterScalar" },
+                    { "$ref": "#/components/schemas/StatusFilterVector" }
+                  ],
+                  "discriminator": {
+                    "propertyName": "op",
+                    "mapping": {
+                      "equals": "#/components/schemas/StatusFilterScalar",
+                      "within": "#/components/schemas/StatusFilterVector"
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/ColorFilterScalar" },
+                    { "$ref": "#/components/schemas/ColorFilterVector" }
+                  ],
+                  "discriminator": {
+                    "propertyName": "op",
+                    "mapping": {
+                      "equals": "#/components/schemas/ColorFilterScalar",
+                      "within": "#/components/schemas/ColorFilterVector"
+                    }
+                  }
+                },
+                { "$ref": "#/components/schemas/VisibilityFilter" },
+                { "$ref": "#/components/schemas/PermsFilter" },
+                { "$ref": "#/components/schemas/ParentIdsFilter" },
+                { "$ref": "#/components/schemas/ArchivedParentIdsFilter" },
+                { "$ref": "#/components/schemas/PublishedParentIdsFilter" },
+                { "$ref": "#/components/schemas/BacklinkIdsFilter" }
+              ]
+            },
+            "type": "array",
+            "title": "Filters"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "filters"],
+        "title": "FilterGroup"
+      },
+      "FilterGroup-Output": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["group"],
+            "const": "group",
+            "title": "Type"
+          },
+          "op": { "$ref": "#/components/schemas/FilterGroupOperator" },
+          "filters": {
+            "items": {
+              "oneOf": [
+                { "$ref": "#/components/schemas/FilterGroup-Output" },
+                {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/CardIdFilterScalar" },
+                    { "$ref": "#/components/schemas/CardIdFilterVector" }
+                  ],
+                  "discriminator": {
+                    "propertyName": "op",
+                    "mapping": {
+                      "equals": "#/components/schemas/CardIdFilterScalar",
+                      "within": "#/components/schemas/CardIdFilterVector"
+                    }
+                  }
+                },
+                { "$ref": "#/components/schemas/NameFilter" },
+                { "$ref": "#/components/schemas/MarkupFilter" },
+                { "$ref": "#/components/schemas/ContentFilter" },
+                { "$ref": "#/components/schemas/AuthorFilter" },
+                { "$ref": "#/components/schemas/MemberCountFilter" },
+                { "$ref": "#/components/schemas/TagFilter" },
+                { "$ref": "#/components/schemas/TagCountFilter" },
+                { "$ref": "#/components/schemas/ChildCountFilter" },
+                { "$ref": "#/components/schemas/ParentCountFilter" },
+                { "$ref": "#/components/schemas/CommentCountFilter" },
+                { "$ref": "#/components/schemas/ShareLinkCountFilter" },
+                { "$ref": "#/components/schemas/LikedFilter" },
+                {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/StatusFilterScalar" },
+                    { "$ref": "#/components/schemas/StatusFilterVector" }
+                  ],
+                  "discriminator": {
+                    "propertyName": "op",
+                    "mapping": {
+                      "equals": "#/components/schemas/StatusFilterScalar",
+                      "within": "#/components/schemas/StatusFilterVector"
+                    }
+                  }
+                },
+                {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/ColorFilterScalar" },
+                    { "$ref": "#/components/schemas/ColorFilterVector" }
+                  ],
+                  "discriminator": {
+                    "propertyName": "op",
+                    "mapping": {
+                      "equals": "#/components/schemas/ColorFilterScalar",
+                      "within": "#/components/schemas/ColorFilterVector"
+                    }
+                  }
+                },
+                { "$ref": "#/components/schemas/VisibilityFilter" },
+                { "$ref": "#/components/schemas/PermsFilter" },
+                { "$ref": "#/components/schemas/ParentIdsFilter" },
+                { "$ref": "#/components/schemas/ArchivedParentIdsFilter" },
+                { "$ref": "#/components/schemas/PublishedParentIdsFilter" },
+                { "$ref": "#/components/schemas/BacklinkIdsFilter" }
+              ]
+            },
+            "type": "array",
+            "title": "Filters"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "filters"],
+        "title": "FilterGroup"
+      },
+      "FilterGroupOperator": {
+        "type": "string",
+        "enum": ["and", "or"],
+        "title": "FilterGroupOperator"
+      },
+      "FriendshipResponse": {
+        "properties": {
+          "other_user": { "$ref": "#/components/schemas/UserPublicProfile" },
+          "modified_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Modified When"
+          }
+        },
+        "type": "object",
+        "required": ["other_user", "modified_when"],
+        "title": "FriendshipResponse"
+      },
+      "HapticThreshold": {
+        "type": "integer",
+        "enum": [0, 1, 2, 3],
+        "title": "HapticThreshold"
+      },
+      "IndentType": {
+        "type": "integer",
+        "enum": [0, 1, 2],
+        "title": "IndentType"
+      },
+      "IntFilter": {
+        "properties": {
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["child_count"],
+                "const": "child_count"
+              },
+              {
+                "type": "string",
+                "enum": ["parent_count"],
+                "const": "parent_count"
+              }
+            ],
+            "title": "Type"
+          },
+          "operator": { "$ref": "#/components/schemas/BackendFilterOperator" },
+          "arg": { "type": "integer", "title": "Arg" }
+        },
+        "type": "object",
+        "required": ["type", "operator", "arg"],
+        "title": "IntFilter"
+      },
+      "LikedFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["liked"],
+            "const": "liked",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["equals"],
+            "const": "equals",
+            "title": "Op"
+          },
+          "arg": { "type": "boolean", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "LikedFilter"
+      },
+      "MarkupFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["markup"],
+            "const": "markup",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["equals", "contains", "within", "regex"],
+            "title": "Op"
+          },
+          "arg": { "type": "string", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "MarkupFilter"
+      },
+      "Member": {
+        "properties": {
+          "status": { "$ref": "#/components/schemas/Status" },
+          "perms": { "$ref": "#/components/schemas/Role" },
+          "via_id": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Via Id"
+          }
+        },
+        "type": "object",
+        "required": ["status", "perms", "via_id"],
+        "title": "Member"
+      },
+      "MemberCountFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["member_count"],
+            "const": "member_count",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "greater_than",
+              "greater_than_or_equal",
+              "less_than",
+              "less_than_or_equal"
+            ],
+            "title": "Op"
+          },
+          "arg": {
+            "anyOf": [{ "type": "integer" }, { "type": "number" }],
+            "title": "Arg"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "MemberCountFilter"
+      },
+      "MembershipCreatedVia": {
+        "type": "integer",
+        "enum": [0, 1, 2, 3],
+        "title": "MembershipCreatedVia"
+      },
+      "NameFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["name"],
+            "const": "name",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["equals", "contains", "within", "regex"],
+            "title": "Op"
+          },
+          "arg": { "type": "string", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "NameFilter"
+      },
+      "ParentCountFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["parent_count"],
+            "const": "parent_count",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "greater_than",
+              "greater_than_or_equal",
+              "less_than",
+              "less_than_or_equal"
+            ],
+            "title": "Op"
+          },
+          "arg": {
+            "anyOf": [{ "type": "integer" }, { "type": "number" }],
+            "title": "Arg"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "ParentCountFilter"
+      },
+      "ParentIdsFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["parent_ids"],
+            "const": "parent_ids",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["contains"],
+            "const": "contains",
+            "title": "Op"
+          },
+          "arg": { "type": "string", "format": "uuid", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "ParentIdsFilter"
+      },
+      "PatchCollection": {
+        "properties": {
+          "spec": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CollectionSpecReference" },
+              { "$ref": "#/components/schemas/CollectionSpecDefined-Input" },
+              { "type": "null" }
+            ],
+            "title": "Spec"
+          },
+          "view": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/StoredViewData" },
+              { "type": "null" }
+            ]
+          },
+          "order": {
+            "anyOf": [{ "type": "string", "maxLength": 8 }, { "type": "null" }],
+            "title": "Order"
+          }
+        },
+        "type": "object",
+        "title": "PatchCollection"
+      },
+      "Perm": {
+        "type": "integer",
+        "enum": [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096],
+        "title": "Perm"
+      },
+      "PermsFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["perms"],
+            "const": "perms",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["can"],
+            "const": "can",
+            "title": "Op"
+          },
+          "arg": { "$ref": "#/components/schemas/Perm" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "PermsFilter"
+      },
+      "PostCollection": {
+        "properties": {
+          "spec": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CollectionSpecReference" },
+              { "$ref": "#/components/schemas/CollectionSpecDefined-Input" }
+            ],
+            "title": "Spec"
+          },
+          "view": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/StoredViewData" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["spec"],
+        "title": "PostCollection"
+      },
+      "PostComment": {
+        "properties": {
+          "markup": { "type": "string", "maxLength": 2048, "title": "Markup" },
+          "html": { "type": "string", "maxLength": 20480, "title": "Html" },
+          "created_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Created When"
+          }
+        },
+        "type": "object",
+        "required": ["markup", "html"],
+        "title": "PostComment"
+      },
+      "PostSimpleCard": {
+        "properties": {
+          "name": { "type": "string", "maxLength": 512, "title": "Name" },
+          "markup": { "type": "string", "maxLength": 24000, "title": "Markup" },
+          "color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ]
+          },
+          "icon": {
+            "anyOf": [
+              { "type": "string", "maxLength": 64 },
+              { "type": "null" }
+            ],
+            "title": "Icon"
+          },
+          "tags": {
+            "items": { "type": "string", "maxLength": 32 },
+            "type": "array",
+            "title": "Tags",
+            "default": []
+          },
+          "parent_ids": {
+            "items": { "type": "string", "format": "uuid" },
+            "type": "array",
+            "title": "Parent Ids",
+            "default": []
+          },
+          "source": {
+            "anyOf": [{ "type": "string", "maxLength": 8 }, { "type": "null" }],
+            "title": "Source"
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    { "type": "string" },
+                    { "type": "integer" },
+                    { "type": "number" },
+                    { "type": "boolean" }
+                  ]
+                },
+                "type": "object"
+              },
+              { "type": "null" }
+            ],
+            "title": "Meta"
+          }
+        },
+        "type": "object",
+        "required": ["name", "markup"],
+        "title": "PostSimpleCard"
+      },
+      "PostTemplate": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Id"
+          },
+          "name": { "type": "string", "maxLength": 512, "title": "Name" },
+          "markup": { "type": "string", "maxLength": 24000, "title": "Markup" },
+          "created_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Created When"
+          }
+        },
+        "type": "object",
+        "required": ["name", "markup", "created_when"],
+        "title": "PostTemplate"
+      },
+      "PostWebhook": {
+        "properties": {
+          "url": { "type": "string", "maxLength": 2048, "title": "Url" }
+        },
+        "type": "object",
+        "required": ["url"],
+        "title": "PostWebhook"
+      },
+      "PreconfiguredCollectionId": {
+        "type": "string",
+        "enum": ["thoughts", "tasks", "green", "images"],
+        "title": "PreconfiguredCollectionId"
+      },
+      "PrefFlag": {
+        "type": "integer",
+        "enum": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192],
+        "title": "PrefFlag"
+      },
+      "PublicOwnerResponse": {
+        "properties": {
+          "first_name": { "type": "string", "title": "First Name" },
+          "last_name": { "type": "string", "title": "Last Name" },
+          "photo": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Photo"
+          }
+        },
+        "type": "object",
+        "required": ["first_name", "last_name", "photo"],
+        "title": "PublicOwnerResponse"
+      },
+      "PublishedParentIdsFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["published_parent_ids"],
+            "const": "published_parent_ids",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["contains"],
+            "const": "contains",
+            "title": "Op"
+          },
+          "arg": { "type": "string", "format": "uuid", "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "PublishedParentIdsFilter"
+      },
+      "PutApiKey": {
+        "properties": {
+          "data": { "type": "string", "title": "Data" },
+          "enabled": { "type": "boolean", "title": "Enabled" }
+        },
+        "type": "object",
+        "required": ["data", "enabled"],
+        "title": "PutApiKey"
+      },
+      "PutComment": {
+        "properties": {
+          "markup": { "type": "string", "maxLength": 2048, "title": "Markup" },
+          "html": { "type": "string", "maxLength": 20480, "title": "Html" }
+        },
+        "type": "object",
+        "required": ["markup", "html"],
+        "title": "PutComment"
+      },
+      "PutTemplate": {
+        "properties": {
+          "name": { "type": "string", "maxLength": 512, "title": "Name" },
+          "markup": { "type": "string", "maxLength": 24000, "title": "Markup" }
+        },
+        "type": "object",
+        "required": ["name", "markup"],
+        "title": "PutTemplate"
+      },
+      "PutWebhook": {
+        "properties": {
+          "url": { "type": "string", "maxLength": 2048, "title": "Url" },
+          "enabled": { "type": "boolean", "title": "Enabled" }
+        },
+        "type": "object",
+        "title": "PutWebhook"
+      },
+      "RevenuecatSubMethod": {
+        "type": "string",
+        "enum": ["APP_STORE", "PLAY_STORE"],
+        "title": "RevenuecatSubMethod"
+      },
+      "RevenuecatSubResponse": {
+        "properties": {
+          "type": { "$ref": "#/components/schemas/SubscriptionDuration" },
+          "started_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started When"
+          },
+          "expires_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Expires When"
+          },
+          "will_renew": { "type": "boolean", "title": "Will Renew" },
+          "source": {
+            "type": "string",
+            "enum": ["revenuecat"],
+            "const": "revenuecat",
+            "title": "Source"
+          },
+          "revenuecat_subscription_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Revenuecat Subscription Id"
+          },
+          "method": { "$ref": "#/components/schemas/RevenuecatSubMethod" },
+          "price": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Price"
+          },
+          "currency": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Currency"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "started_when",
+          "expires_when",
+          "will_renew",
+          "source",
+          "revenuecat_subscription_id",
+          "method",
+          "price",
+          "currency"
+        ],
+        "title": "RevenuecatSubResponse"
+      },
+      "Role": {
+        "enum": [-1, 0, 1318, 1382, 1398, 4094, 8190],
+        "title": "Role",
+        "type": "integer"
+      },
+      "ShareCodeRequest": {
+        "properties": {
+          "granted_perms": { "$ref": "#/components/schemas/Role" }
+        },
+        "type": "object",
+        "required": ["granted_perms"],
+        "title": "ShareCodeRequest"
+      },
+      "ShareCodeResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "card_id": { "type": "string", "format": "uuid", "title": "Card Id" },
+          "owner_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Owner Id"
+          },
+          "code": { "type": "string", "title": "Code" },
+          "granted_perms": { "$ref": "#/components/schemas/Role" }
+        },
+        "type": "object",
+        "required": ["id", "card_id", "owner_id", "code", "granted_perms"],
+        "title": "ShareCodeResponse"
+      },
+      "ShareLinkCountFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["share_link_count"],
+            "const": "share_link_count",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "greater_than",
+              "greater_than_or_equal",
+              "less_than",
+              "less_than_or_equal"
+            ],
+            "title": "Op"
+          },
+          "arg": {
+            "anyOf": [{ "type": "integer" }, { "type": "number" }],
+            "title": "Arg"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "ShareLinkCountFilter"
+      },
+      "SortType": {
+        "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "title": "SortType",
+        "type": "integer"
+      },
+      "Status": {
+        "enum": [-2, -1, 0, 1, 2],
+        "title": "Status",
+        "type": "integer"
+      },
+      "StatusFilterScalar": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["status"],
+            "const": "status",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["equals"],
+            "const": "equals",
+            "title": "Op"
+          },
+          "arg": { "$ref": "#/components/schemas/Status" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "StatusFilterScalar"
+      },
+      "StatusFilterVector": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["status"],
+            "const": "status",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["within"],
+            "const": "within",
+            "title": "Op"
+          },
+          "arg": {
+            "items": { "$ref": "#/components/schemas/Status" },
+            "type": "array",
+            "title": "Arg"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "StatusFilterVector"
+      },
+      "StoredViewData": {
+        "properties": {
+          "display_type": { "$ref": "#/components/schemas/ViewDisplayType" },
+          "sort_type": { "$ref": "#/components/schemas/SortType" },
+          "sort_ascending": { "title": "Sort Ascending", "type": "boolean" },
+          "broadsheet_cols": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "default": null,
+            "title": "Broadsheet Cols"
+          }
+        },
+        "required": ["display_type", "sort_type", "sort_ascending"],
+        "title": "StoredViewData",
+        "type": "object"
+      },
+      "StringFilter": {
+        "properties": {
+          "type": {
+            "anyOf": [
+              { "type": "string", "enum": ["author"], "const": "author" },
+              { "type": "string", "enum": ["name"], "const": "name" },
+              { "type": "string", "enum": ["content"], "const": "content" },
+              { "type": "string", "enum": ["tag"], "const": "tag" }
+            ],
+            "title": "Type"
+          },
+          "operator": { "$ref": "#/components/schemas/BackendFilterOperator" },
+          "arg": { "type": "string", "title": "Arg" }
+        },
+        "type": "object",
+        "required": ["type", "operator", "arg"],
+        "title": "StringFilter"
+      },
+      "StripeSubResponse": {
+        "properties": {
+          "type": { "$ref": "#/components/schemas/SubscriptionDuration" },
+          "started_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started When"
+          },
+          "expires_when": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Expires When"
+          },
+          "will_renew": { "type": "boolean", "title": "Will Renew" },
+          "source": {
+            "type": "string",
+            "enum": ["stripe"],
+            "const": "stripe",
+            "title": "Source"
+          },
+          "stripe_subscription_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Stripe Subscription Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "started_when",
+          "expires_when",
+          "will_renew",
+          "source",
+          "stripe_subscription_id"
+        ],
+        "title": "StripeSubResponse"
+      },
+      "SubscriptionDuration": {
+        "type": "integer",
+        "enum": [1, 2, 3, 4],
+        "title": "SubscriptionDuration"
+      },
+      "SuccessMessage": {
+        "properties": { "success": { "type": "string", "title": "Success" } },
+        "type": "object",
+        "required": ["success"],
+        "title": "SuccessMessage"
+      },
+      "SynthCreditsResponse": {
+        "properties": { "credits": { "type": "integer", "title": "Credits" } },
+        "type": "object",
+        "required": ["credits"],
+        "title": "SynthCreditsResponse"
+      },
+      "TagCountFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["tag_count"],
+            "const": "tag_count",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "greater_than",
+              "greater_than_or_equal",
+              "less_than",
+              "less_than_or_equal"
+            ],
+            "title": "Op"
+          },
+          "arg": {
+            "anyOf": [{ "type": "integer" }, { "type": "number" }],
+            "title": "Arg"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "TagCountFilter"
+      },
+      "TagFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["tag"],
+            "const": "tag",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["contains"],
+            "const": "contains",
+            "title": "Op"
+          },
+          "arg": { "type": "string", "maxLength": 32, "title": "Arg" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "TagFilter"
+      },
+      "TemplateResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "name": { "type": "string", "title": "Name" },
+          "markup": { "type": "string", "title": "Markup" },
+          "created_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created When"
+          },
+          "modified_when": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Modified When"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name", "markup", "created_when", "modified_when"],
+        "title": "TemplateResponse"
+      },
+      "TransformedCardResponse": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/ExtendedCardDataResponse" },
+          "membership": {
+            "$ref": "#/components/schemas/ExtendedCardMembershipResponse"
+          },
+          "backlinks": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Backlinks"
+          },
+          "parents": {
+            "properties": {
+              "[card_id]": {
+                "$ref": "#/components/schemas/ExtendedCardParentResponse"
+              }
+            },
+            "type": "object",
+            "title": "Parents"
+          }
+        },
+        "type": "object",
+        "required": ["data", "membership", "backlinks", "parents"],
+        "title": "TransformedCardResponse"
+      },
+      "UpdatePrefs": {
+        "properties": {
+          "sort_type": {
+            "allOf": [{ "$ref": "#/components/schemas/SortType" }]
+          },
+          "indent_type": {
+            "allOf": [{ "$ref": "#/components/schemas/IndentType" }]
+          },
+          "appearance_mode": {
+            "allOf": [{ "$ref": "#/components/schemas/AppearanceMode" }]
+          },
+          "day_theme": {
+            "allOf": [{ "$ref": "#/components/schemas/AppearanceTheme" }]
+          },
+          "night_theme": {
+            "allOf": [{ "$ref": "#/components/schemas/AppearanceTheme" }]
+          },
+          "couple_key": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Couple Key"
+          },
+          "persona": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/UserPersona" },
+              { "type": "null" }
+            ]
+          },
+          "haptic_threshold": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/HapticThreshold" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "UpdatePrefs"
+      },
+      "UserAccount": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/UserData" },
+          "subscription": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/StripeSubResponse" },
+              { "$ref": "#/components/schemas/RevenuecatSubResponse" },
+              { "type": "null" }
+            ],
+            "title": "Subscription"
+          },
+          "quota": { "type": "integer", "title": "Quota" },
+          "intercom_hash": { "type": "string", "title": "Intercom Hash" }
+        },
+        "type": "object",
+        "required": ["data", "subscription", "quota"],
+        "title": "UserAccount"
+      },
+      "UserBioPhoto": {
+        "properties": {
+          "public_profile": { "$ref": "#/components/schemas/UserPublicProfile" }
+        },
+        "type": "object",
+        "required": ["public_profile"],
+        "title": "UserBioPhoto"
+      },
+      "UserData": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "email": { "type": "string", "title": "Email" },
+          "first_name": { "type": "string", "title": "First Name" },
+          "last_name": { "type": "string", "title": "Last Name" },
+          "username": { "type": "string", "title": "Username" },
+          "referral_code": { "type": "string", "title": "Referral Code" },
+          "bio": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Bio"
+          },
+          "photo": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Photo"
+          },
+          "kind": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/UserKind" },
+              { "type": "null" }
+            ]
+          },
+          "prefs": { "$ref": "#/components/schemas/UserPrefs" },
+          "pref_flags": { "type": "integer", "title": "Pref Flags" },
+          "feature_preview_flags": {
+            "type": "integer",
+            "title": "Feature Preview Flags"
+          },
+          "pins": {
+            "anyOf": [
+              {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Pins"
+          },
+          "status": { "$ref": "#/components/schemas/Status" },
+          "access_level": { "$ref": "#/components/schemas/AccessLevel" }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "first_name",
+          "last_name",
+          "username",
+          "referral_code",
+          "prefs",
+          "pref_flags",
+          "feature_preview_flags",
+          "pins",
+          "status",
+          "access_level"
+        ],
+        "title": "UserData"
+      },
+      "UserKind": {
+        "type": "integer",
+        "enum": [0, 1, 2, 3],
+        "title": "UserKind"
+      },
+      "UserPersona": {
+        "type": "integer",
+        "enum": [0, 1, 2, 3],
+        "title": "UserPersona"
+      },
+      "UserPinsUpdateRequest": {
+        "properties": {
+          "pins": {
+            "items": { "type": "string", "format": "uuid" },
+            "type": "array",
+            "title": "Pins"
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["add", "remove", "replace"],
+            "title": "Mode",
+            "default": "replace"
+          }
+        },
+        "type": "object",
+        "required": ["pins"],
+        "title": "UserPinsUpdateRequest"
+      },
+      "UserPrefs": {
+        "properties": {
+          "indent_type": { "$ref": "#/components/schemas/IndentType" },
+          "sort_type": { "$ref": "#/components/schemas/SortType" },
+          "appearance_mode": { "$ref": "#/components/schemas/AppearanceMode" },
+          "day_theme": { "$ref": "#/components/schemas/AppearanceTheme" },
+          "night_theme": { "$ref": "#/components/schemas/AppearanceTheme" },
+          "couple_key": {
+            "anyOf": [{ "type": "string", "maxLength": 4 }, { "type": "null" }],
+            "title": "Couple Key"
+          },
+          "persona": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/UserPersona" },
+              { "type": "null" }
+            ]
+          },
+          "haptic_threshold": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/HapticThreshold" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "indent_type",
+          "sort_type",
+          "appearance_mode",
+          "day_theme",
+          "night_theme",
+          "couple_key"
+        ],
+        "title": "UserPrefs"
+      },
+      "UserPublicProfile": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "username": { "type": "string", "title": "Username" },
+          "first_name": { "type": "string", "title": "First Name" },
+          "last_name": { "type": "string", "title": "Last Name" },
+          "bio": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Bio"
+          },
+          "photo": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Photo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "first_name",
+          "last_name",
+          "bio",
+          "photo"
+        ],
+        "title": "UserPublicProfile"
+      },
+      "UserPublicProfileUpdateRequest": {
+        "properties": {
+          "bio": {
+            "anyOf": [
+              { "type": "string", "maxLength": 256 },
+              { "type": "null" }
+            ],
+            "title": "Bio"
+          },
+          "photo": {
+            "anyOf": [
+              { "type": "string", "maxLength": 2048 },
+              { "type": "null" }
+            ],
+            "title": "Photo"
+          }
+        },
+        "type": "object",
+        "title": "UserPublicProfileUpdateRequest"
+      },
+      "UserTwoFaced": {
+        "properties": {
+          "private_data": { "$ref": "#/components/schemas/UserData" },
+          "public_profile": { "$ref": "#/components/schemas/UserPublicProfile" }
+        },
+        "type": "object",
+        "required": ["private_data", "public_profile"],
+        "title": "UserTwoFaced"
+      },
+      "UserUpdateRequest": {
+        "properties": {
+          "new_username": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 3,
+            "title": "New Username"
+          },
+          "first_name": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 32,
+            "title": "Last Name"
+          },
+          "bio": {
+            "anyOf": [
+              { "type": "string", "maxLength": 256 },
+              { "type": "null" }
+            ],
+            "title": "Bio"
+          },
+          "photo": {
+            "anyOf": [
+              { "type": "string", "maxLength": 2048 },
+              { "type": "null" }
+            ],
+            "title": "Photo"
+          }
+        },
+        "type": "object",
+        "required": ["new_username", "first_name", "last_name"],
+        "title": "UserUpdateRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "type": {
+            "const": "validation",
+            "enum": ["validation"],
+            "title": "Type",
+            "type": "string"
+          },
+          "detail": { "title": "Detail", "type": "string" },
+          "meta": {
+            "additionalProperties": { "type": "string" },
+            "title": "Meta",
+            "type": "object"
+          },
+          "status": { "title": "Status", "type": "integer" }
+        },
+        "required": ["type", "detail", "meta", "status"],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "VersionMeta": {
+        "properties": {
+          "name": { "type": "string", "title": "Name" },
+          "version": { "type": "string", "title": "Version" },
+          "hash": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Hash"
+          }
+        },
+        "type": "object",
+        "required": ["name", "version", "hash"],
+        "title": "VersionMeta"
+      },
+      "ViewDisplayType": {
+        "enum": [1, 2, 4],
+        "title": "ViewDisplayType",
+        "type": "integer"
+      },
+      "Visibility": {
+        "enum": [-1, 0, 1],
+        "title": "Visibility",
+        "type": "integer"
+      },
+      "VisibilityFilter": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["visibility"],
+            "const": "visibility",
+            "title": "Type"
+          },
+          "op": {
+            "type": "string",
+            "enum": ["equals"],
+            "const": "equals",
+            "title": "Op"
+          },
+          "arg": { "$ref": "#/components/schemas/Visibility" },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "inv": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Inv"
+          },
+          "case_sensitive": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Case Sensitive"
+          }
+        },
+        "type": "object",
+        "required": ["type", "op", "arg"],
+        "title": "VisibilityFilter"
+      },
+      "WebhookResponse": {
+        "properties": {
+          "id": { "type": "integer", "title": "Id" },
+          "url": { "type": "string", "title": "Url" },
+          "enabled": { "type": "boolean", "title": "Enabled" },
+          "last_response_code": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Last Response Code"
+          },
+          "last_response_body": { "title": "Last Response Body" }
+        },
+        "type": "object",
+        "required": ["id", "url", "enabled"],
+        "title": "WebhookResponse"
+      },
+      "WrappedCardResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [true],
+            "const": true,
+            "title": "Success"
+          },
+          "card_id": { "type": "string", "format": "uuid", "title": "Card Id" },
+          "status_code": { "type": "integer", "title": "Status Code" },
+          "payload": { "$ref": "#/components/schemas/TransformedCardResponse" }
+        },
+        "type": "object",
+        "required": ["success", "card_id", "status_code", "payload"],
+        "title": "WrappedCardResponse"
+      },
+      "WrappedErrorResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [false],
+            "const": false,
+            "title": "Success"
+          },
+          "card_id": { "type": "string", "format": "uuid", "title": "Card Id" },
+          "status_code": { "type": "integer", "title": "Status Code" },
+          "payload": { "type": "string", "title": "Payload" }
+        },
+        "type": "object",
+        "required": ["success", "card_id", "status_code", "payload"],
+        "title": "WrappedErrorResponse"
+      },
+      "RewardType": {
+        "enum": [
+          "tag_cards",
+          "create_parents",
+          "link_cards",
+          "share_cards",
+          "confirm_email"
+        ],
+        "title": "RewardType",
+        "type": "string"
+      },
+      "PostCard": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/PostCardData" },
+          "membership": { "$ref": "#/components/schemas/PostCardMembership" },
+          "parents": {
+            "properties": {
+              "[card_id]": { "$ref": "#/components/schemas/UpsertCardParent" }
+            },
+            "default": null,
+            "title": "Parents",
+            "type": "object"
+          }
+        },
+        "required": ["data", "membership"],
+        "title": "PostCard",
+        "type": "object"
+      },
+      "PostCardData": {
+        "properties": {
+          "id": { "format": "uuid", "title": "Id", "type": "string" },
+          "name": {
+            "default": "",
+            "maxLength": 512,
+            "title": "Name",
+            "type": "string"
+          },
+          "markup": {
+            "default": "",
+            "maxLength": 24000,
+            "title": "Markup",
+            "type": "string"
+          },
+          "html": {
+            "default": "",
+            "maxLength": 480000,
+            "title": "Html",
+            "type": "string"
+          },
+          "ydoc": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "default": null,
+            "title": "Ydoc"
+          },
+          "icon": {
+            "anyOf": [
+              { "maxLength": 64, "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "created_when": {
+            "anyOf": [
+              { "format": "date-time", "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Created When"
+          },
+          "modified_when": {
+            "anyOf": [
+              { "format": "date-time", "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Modified When"
+          },
+          "targeted_when": {
+            "anyOf": [
+              { "format": "date-time", "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Targeted When"
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    { "type": "string" },
+                    { "type": "integer" },
+                    { "type": "number" },
+                    { "type": "boolean" }
+                  ]
+                },
+                "type": "object"
+              },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Meta"
+          },
+          "import_id": {
+            "anyOf": [
+              { "format": "uuid", "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Import Id"
+          },
+          "tags": {
+            "default": [],
+            "items": { "maxLength": 32, "type": "string" },
+            "title": "Tags",
+            "type": "array"
+          },
+          "source": {
+            "anyOf": [{ "maxLength": 8, "type": "string" }, { "type": "null" }],
+            "default": null,
+            "title": "Source"
+          }
+        },
+        "required": ["id"],
+        "title": "PostCardData",
+        "type": "object"
+      },
+      "PostCardMembership": {
+        "properties": {
+          "id": { "format": "uuid", "title": "Id", "type": "string" },
+          "personal_color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "personal_tags": {
+            "default": [],
+            "items": { "maxLength": 32, "type": "string" },
+            "title": "Personal Tags",
+            "type": "array"
+          },
+          "created_when": {
+            "anyOf": [
+              { "format": "date-time", "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Created When"
+          },
+          "liked": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "default": null,
+            "title": "Liked"
+          },
+          "visibility": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "default": null,
+            "title": "Visibility"
+          },
+          "view": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/StoredViewData" },
+              { "type": "null" }
+            ],
+            "default": null
+          }
+        },
+        "required": ["id"],
+        "title": "PostCardMembership",
+        "type": "object"
+      },
+      "UpsertCardParent": {
+        "properties": {
+          "publishing_perms": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Role" },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "created_when": {
+            "anyOf": [
+              { "format": "date-time", "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Created When"
+          },
+          "archived": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "default": null,
+            "title": "Archived"
+          },
+          "cutting": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "default": null,
+            "title": "Cutting"
+          }
+        },
+        "title": "UpsertCardParent",
+        "type": "object"
+      },
+      "PatchCard": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PatchCardData" },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "membership": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PatchCardMembership" },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "parents": {
+            "anyOf": [
+              {
+                "properties": {
+                  "[card_id]": {
+                    "$ref": "#/components/schemas/UpsertCardParent"
+                  }
+                },
+                "type": "object"
+              },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Parents"
+          }
+        },
+        "title": "PatchCard",
+        "type": "object"
+      },
+      "PatchCardData": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              { "maxLength": 512, "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Name"
+          },
+          "markup": {
+            "anyOf": [
+              { "maxLength": 24000, "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Markup"
+          },
+          "html": {
+            "anyOf": [
+              { "maxLength": 480000, "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Html"
+          },
+          "ydoc": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "default": null,
+            "title": "Ydoc"
+          },
+          "icon": {
+            "anyOf": [
+              { "maxLength": 64, "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "modified_when": {
+            "anyOf": [
+              { "format": "date-time", "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Modified When"
+          },
+          "targeted_when": {
+            "anyOf": [
+              { "format": "date-time", "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Targeted When"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": { "maxLength": 32, "type": "string" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Tags"
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    { "type": "string" },
+                    { "type": "integer" },
+                    { "type": "number" },
+                    { "type": "boolean" }
+                  ]
+                },
+                "type": "object"
+              },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Meta"
+          }
+        },
+        "title": "PatchCardData",
+        "type": "object"
+      },
+      "PatchCardMembership": {
+        "properties": {
+          "personal_color": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CoreColor" },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "liked": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "default": null,
+            "title": "Liked"
+          },
+          "opened_when": {
+            "anyOf": [
+              { "format": "date-time", "type": "string" },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Opened When"
+          },
+          "auto_publish_children": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "default": null,
+            "title": "Auto Publish Children"
+          },
+          "personal_tags": {
+            "anyOf": [
+              {
+                "items": { "maxLength": 32, "type": "string" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "default": null,
+            "title": "Personal Tags"
+          },
+          "status": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Status" },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "visibility": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Visibility" },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "view": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/StoredViewData" },
+              { "type": "null" }
+            ],
+            "default": null
+          }
+        },
+        "title": "PatchCardMembership",
+        "type": "object"
+      },
+      "AuthError": {
+        "properties": {
+          "type": {
+            "const": "auth",
+            "enum": ["auth"],
+            "title": "Type",
+            "type": "string"
+          },
+          "detail": { "title": "Detail", "type": "string" },
+          "meta": {
+            "enum": ["APIKey", "Bearer", "Fresh", "Refresh"],
+            "title": "Meta",
+            "type": "string"
+          },
+          "status": { "title": "Status", "type": "integer" }
+        },
+        "required": ["type", "detail", "meta", "status"],
+        "title": "AuthError",
+        "type": "object"
+      },
+      "BasicError": {
+        "properties": {
+          "type": {
+            "const": "basic",
+            "enum": ["basic"],
+            "title": "Type",
+            "type": "string"
+          },
+          "detail": { "title": "Detail", "type": "string" },
+          "meta": { "title": "Meta", "type": "null" },
+          "status": { "title": "Status", "type": "integer" }
+        },
+        "required": ["type", "detail", "meta", "status"],
+        "title": "BasicError",
+        "type": "object"
+      },
+      "CardError": {
+        "properties": {
+          "type": {
+            "const": "card",
+            "enum": ["card"],
+            "title": "Type",
+            "type": "string"
+          },
+          "detail": { "title": "Detail", "type": "string" },
+          "meta": { "format": "uuid", "title": "Meta", "type": "string" },
+          "status": { "title": "Status", "type": "integer" }
+        },
+        "required": ["type", "detail", "meta", "status"],
+        "title": "CardError",
+        "type": "object"
+      },
+      "NumericError": {
+        "properties": {
+          "type": {
+            "const": "numeric",
+            "enum": ["numeric"],
+            "title": "Type",
+            "type": "string"
+          },
+          "detail": { "title": "Detail", "type": "string" },
+          "meta": {
+            "anyOf": [{ "type": "number" }, { "type": "integer" }],
+            "title": "Meta"
+          },
+          "status": { "title": "Status", "type": "integer" }
+        },
+        "required": ["type", "detail", "meta", "status"],
+        "title": "NumericError",
+        "type": "object"
+      },
+      "PermError": {
+        "properties": {
+          "type": {
+            "const": "permission",
+            "enum": ["permission"],
+            "title": "Type",
+            "type": "string"
+          },
+          "detail": { "title": "Detail", "type": "string" },
+          "meta": { "$ref": "#/components/schemas/PermErrorMeta" },
+          "status": { "title": "Status", "type": "integer" }
+        },
+        "required": ["type", "detail", "meta", "status"],
+        "title": "PermError",
+        "type": "object"
+      },
+      "PermErrorMeta": {
+        "properties": {
+          "perm_name": { "title": "Perm Name", "type": "string" },
+          "perm_value": { "title": "Perm Value", "type": "integer" }
+        },
+        "required": ["perm_name", "perm_value"],
+        "title": "PermErrorMeta",
+        "type": "object"
+      },
+      "RecaptchaError": {
+        "properties": {
+          "type": {
+            "const": "recaptcha",
+            "enum": ["recaptcha"],
+            "title": "Type",
+            "type": "string"
+          },
+          "detail": { "title": "Detail", "type": "string" },
+          "meta": { "title": "Meta", "type": "boolean" },
+          "status": { "title": "Status", "type": "integer" }
+        },
+        "required": ["type", "detail", "meta", "status"],
+        "title": "RecaptchaError",
+        "type": "object"
+      },
+      "UnifiedError": {
+        "discriminator": {
+          "mapping": {
+            "auth": "#/components/schemas/AuthError",
+            "basic": "#/components/schemas/BasicError",
+            "card": "#/components/schemas/CardError",
+            "numeric": "#/components/schemas/NumericError",
+            "permission": "#/components/schemas/PermError",
+            "recaptcha": "#/components/schemas/RecaptchaError",
+            "validation": "#/components/schemas/ValidationError"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          { "$ref": "#/components/schemas/AuthError" },
+          { "$ref": "#/components/schemas/BasicError" },
+          { "$ref": "#/components/schemas/CardError" },
+          { "$ref": "#/components/schemas/PermError" },
+          { "$ref": "#/components/schemas/RecaptchaError" },
+          { "$ref": "#/components/schemas/ValidationError" },
+          { "$ref": "#/components/schemas/NumericError" }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": { "password": { "scopes": {}, "tokenUrl": "/v1/user/login" } }
+      },
+      "APIKeyHeader": { "type": "apiKey", "in": "header", "name": "Api-Key" }
+    }
+  }
+}

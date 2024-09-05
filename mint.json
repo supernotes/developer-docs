@@ -15,7 +15,7 @@
       "to": "#FF6682"
     }
   },
-  "openapi": "https://api.supernotes.app/openapi.json",
+  "openapi": "openapi.json",
   "api": {
     "baseUrl": "https://api.supernotes.app/",
     "auth": {
