@@ -12,6 +12,18 @@ Declaring the status of various objects, most notably cards
 2: Kept cards
 ```
 
+## Visibility
+
+Set whether a card is Priority (shown in the Outline), Visible (only shown in the Noteboard), or Invisible (by default hidden in the Noteboard and search results):
+
+```tsx
+enum Visibility {
+  PRIORITY = 1
+  VISIBLE = 0
+  INVISIBLE = -1
+}
+```
+
 ## Roles & Perms
 
 Set different roles and corresponding permissions on a card:
